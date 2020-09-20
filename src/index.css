@@ -1,0 +1,54 @@
+body {
+  background-color: #4ba7f2;
+  margin: 0px;
+  user-select: none;
+}
+#Navbar {
+  background-color: #ffffff;
+  color: #4ba7f2;
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  padding-top: 15px;
+}
+#Navbar ul {
+  padding: 0px;
+}
+#Navbar li {
+  list-style: none;
+  padding: 15px;
+  transition: ease-out 0.4s;
+}
+.Selected {
+  background-color: #4ba7f2;
+  color: #ffffff;
+}
+#Content {
+  padding: 15px;
+}
+#Servers-List div {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 15px;
+}
+#Servers-List div:hover {
+  background-color: #cccccc;
+}
+#Servers-Add {
+  background-color: #57ff5f;
+  color: #000000;
+  padding: 15px;
+  border-radius: 15px;
+}
+#Servers-Add:hover {
+  background-color: #51eb59;
+}
+#Servers-List {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+#Servers-DisplayText {
+  font-size: 30px;
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Minecraft Server Shell</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <div id='Navbar'>
+      <ul>
+        <li class='Selected'>Servers</li>
+        <li>Option 2</li>
+      </ul>
+    </div>
+    <div id='Content'>
+      <div id='Servers'>
+        <div id='Servers-DisplayText'> </div>
+        <div id='Servers-List'></div>
+        <div id='Servers-Add' onclick='newServer()'>Add Server</div>
+      </div>
+      <div id='NewServer'>
+        <div id='NewServer-DisplayText'>Fetching from papermc.io...</div>
+        <div id='NewServer-FetchVersion'>
+          <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
+          <select id='NewServer-VersionSelect'></select>
+          <br /><br />
+          <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
+          <select id='NewServer-BuildSelect'></select>
+          <br /><br />
+          <button id='NewServer-JarDownload'>Download</button>
+        </div>
+      </div>
+    </div>
+    <script src='script.js'></script>
+  </body>
+</html>
