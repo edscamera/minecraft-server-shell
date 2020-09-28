@@ -19,19 +19,26 @@
         <div id='Servers-Add' onclick='newServer()'>Add Server</div>
       </div>
       <div id='NewServer'>
-        <div id='NewServer-DisplayText'>Fetching from papermc.io...</div>
-        <div id='NewServer-FetchVersion'>
-          <label for='NewServer-ServerName'>Server Name:</label>
-          <input type='text' id='NewServer-ServerName'>
-          <br /><br />
-          <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
-          <select id='NewServer-VersionSelect'></select>
-          <br /><br />
-          <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
-          <select id='NewServer-BuildSelect'></select>
-          <br /><br />
-          <button id='NewServer-JarDownload'>Download</button>
-        </div>
+        <label for='NewServer-ServerName'>Server Name:</label>
+        <input type='text' id='NewServer-ServerName'>
+        <br /><br />
+        <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
+        <select id='NewServer-VersionSelect'></select>
+        <br /><br />
+        <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
+        <select id='NewServer-BuildSelect'></select>
+        <br /><br />
+        <label for='NewServer-EULA'>Do you agree to the <a onclick='electron.shell.openExternal("https:/\/account.mojang.com/documents/minecraft_eula")'>Minecraft EULA</a>?</label>
+        <input type='checkbox' id='NewServer-EULA'>
+        <br /><br />
+        <button id='NewServer-JarDownload' disabled>Create</button>
+      </div>
+    </div>
+    <div id='Loading'>
+      <div id='Loading-Background'></div>
+      <div id='Loading-Subcontainer'>
+        <div id='Loading-Icon'></div>
+        <h1 id='Loading-Text'>Loading</h1>
       </div>
     </div>
     <script src='script.js'></script>

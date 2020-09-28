@@ -1,5 +1,7 @@
 // Imports
 const fs = require("fs");
+const electron = require("electron");
+const { loadavg } = require("os");
 const http = require("follow-redirects").http;
 // Navbar Setup
 for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
@@ -14,6 +16,11 @@ for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
 document.querySelector('#Content').style.marginLeft = document.querySelector('#Navbar').offsetWidth + 'px';
 // Function Declaration
 const removeChildren = parent => { while (parent.firstChild) parent.removeChild(parent.firstChild); }
+const showLoad = text => {
+    document.querySelector('#Loading').style.display = 'block';
+    document.querySelector('#Loading-Text').innerText = text;
+    if (text === undefined) document.querySelector('#Loading').style.display = 'none';
+};
 const showTab = tab => {
     for (let t of document.querySelector('#Content').children) {
         t.style.display = 'none';
@@ -26,7 +33,7 @@ const getDirectories = source =>
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name)
 const retrieveLocalServers = () => {
-    document.querySelector('#Servers-DisplayText').innerText = 'Retrieving Local Servers...';
+    showLoad('Locating Servers')
     removeChildren(document.querySelector('#Servers-List'));
     if (!fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`)) {
         fs.mkdirSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`);
@@ -41,12 +48,12 @@ const retrieveLocalServers = () => {
         el.innerText = s;
         document.querySelector('#Servers-List').appendChild(el);
     });
+    showLoad();
 };
 retrieveLocalServers();
 const newServer = () => {
     showTab('NewServer');
-    document.querySelector('#NewServer-DisplayText').style.display = 'block';
-    document.querySelector('#NewServer-FetchVersion').style.display = 'none';
+    showLoad('Fetching Data');
     window.fetch("https://papermc.io/api/v1/paper").then(response => response.json()).then(data => {
         data.versions.forEach(version => {
             let elm = document.createElement('OPTION');
@@ -55,24 +62,22 @@ const newServer = () => {
         });
         document.querySelector('#NewServer-VersionSelect').onchange = () => {
             removeChildren(document.querySelector('#NewServer-BuildSelect'));
-            document.querySelector('#NewServer-DisplayText').style.display = 'block';
-            document.querySelector('#NewServer-FetchVersion').style.display = 'none';
             window.fetch(`https://papermc.io/api/v1/paper/${document.querySelector('#NewServer-VersionSelect').value}`).then(response => response.json()).then(data => {
                 data.builds.all.forEach(build => {
                     let elm = document.createElement('OPTION');
                     elm.innerText = build === data.builds.latest ? `${build} (Latest)` : build;
                     document.querySelector('#NewServer-BuildSelect').appendChild(elm);
                 });
-                document.querySelector('#NewServer-DisplayText').style.display = 'none';
-                document.querySelector('#NewServer-FetchVersion').style.display = 'block';
+                showLoad();
             });
         };
         document.querySelector('#NewServer-VersionSelect').onchange();
-        document.querySelector('#NewServer-DisplayText').style.display = 'none';
-        document.querySelector('#NewServer-FetchVersion').style.display = 'block';
     });
+    document.querySelector('#NewServer-EULA').onchange = () => document.querySelector('#NewServer-JarDownload').disabled = !document.querySelector('#NewServer-JarDownload').disabled;
     document.querySelector('#NewServer-JarDownload').onclick = () => {
-        let serverName = document.querySelector('#NewServer-ServerName').value.replace(/\/||\\||\||\|||./g, '')
+        if (!document.querySelector('#NewServer-EULA').checked) return;
+        showLoad('Downloading JAR');
+        let serverName = document.querySelector('#NewServer-ServerName').value.replace(/\/||\\||\||\|||./g, '');
         fs.mkdir(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}`, err => {
             if (err === null) {
                 try {
@@ -80,11 +85,42 @@ const newServer = () => {
                     let request = http.get(`http://papermc.io/api/v1/paper/${document.querySelector('#NewServer-VersionSelect').value}/${document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]}/download`, response => {
                         response.pipe(file);
                     });
-                } catch (error) {
-                    alert(`An error occurred downloading the server jar.\n\n${error}`)
+                    showLoad('Accepting EULA');
+                    try {
+                        fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\eula.txt`, 'eula=true');
+                        showLoad('Creating Start Task');
+                        try {
+                            fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\start.bat`, 'java -jar server.jar -Xms 512M -Xmx 2G');
+                            showLoad('Saving Data');
+                            try {
+                                fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\minecraftservershell.json`, JSON.stringify({
+                                    server: {
+                                        version: document.querySelector('#NewServer-VersionSelect').value,
+                                        build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
+                                    },
+                                    memory: '2G'
+                                }));
+                                showLoad();
+                                showTab('Servers');
+                                retrieveLocalServers();
+                            } catch(err4) {
+                                alert(`An unknown error occured creating the json data.\n\n${err3}`);
+                            }
+                        }catch(err3) {
+                            alert(`An unknown error occured creating the start server task.\n\n${err3}`);
+                        }
+                    } catch (err2) {
+                        alert(`An unknown error occured accepting the EULA.\n\n${err2}`);
+                    }
+                } catch (err1) {
+                    alert(`An unknown error occurred downloading the server jar.\n\n${err1}`);
                 }
             } else {
-                alert(`An error occurred creating the folder.\n\n${error}`);
+                if (document.querySelector('#NewServer-ServerName').value === '') {
+                    alert('Server name cannot be empty!');
+                } else {
+                    alert(`An unknown error occurred creating the folder.\n\n${err}`);
+                }
             }
         });
     };
