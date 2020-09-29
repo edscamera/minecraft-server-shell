@@ -1,5 +1,8 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const os = require('os');
+const pty = require('node-pty');
+const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -19,7 +22,16 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(`${__dirname}/index.html`);
+  let ptyProcess = pty.spawn(shell, [], {
+    name: 'xterm-color',
+    cols: 80,
+    rows: 24,
+    cwd: process.env.HOME,
+    env: process.env
+  });
+  ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
+  ipcMain.on('terminal.toTerminal', (event, data) => ptyProcess.write(data));
 };
 
 // This method will be called when Electron has finished

@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "rebuild": "electron-rebuild"
   },
   "keywords": [],
   "author": {
@@ -45,8 +46,11 @@
     }
   },
   "dependencies": {
+    "electron-rebuild": "^2.0.3",
     "electron-squirrel-startup": "^1.0.0",
-    "follow-redirects": "^1.13.0"
+    "follow-redirects": "^1.13.0",
+    "node-pty": "^0.9.0",
+    "xterm": "^4.9.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.53",

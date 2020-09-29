@@ -9,7 +9,7 @@
     <div id='Navbar'>
       <ul>
         <li class='Selected'>Servers</li>
-        <li>Option 2</li>
+        <li>Console</li>
       </ul>
     </div>
     <div id='Content'>
@@ -19,8 +19,11 @@
         <div id='Servers-Add' onclick='newServer()'>Add Server</div>
       </div>
       <div id='NewServer'>
-        <label for='NewServer-ServerName'>Server Name:</label>
+        <label for='NewServer-ServerName'>Server Name: </label>
         <input type='text' id='NewServer-ServerName'>
+        <br /><br />
+        <label for='NewServer-Icon'>Server Icon: </label>
+        <input type='file' id='NewServer-Icon' accept="image/png">
         <br /><br />
         <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
         <select id='NewServer-VersionSelect'></select>
@@ -32,6 +35,9 @@
         <input type='checkbox' id='NewServer-EULA'>
         <br /><br />
         <button id='NewServer-JarDownload' disabled>Create</button>
+      </div>
+      <div id='Console'>
+        <div id='Console-Terminal'></div>
       </div>
     </div>
     <div id='Loading'>

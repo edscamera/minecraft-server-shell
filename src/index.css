@@ -41,6 +41,9 @@ a:active { color: #00eeff }
   margin-bottom: 15px;
   border-radius: 15px;
 }
+#Servers-List img {
+  margin-top: -15px;
+}
 #Servers-List div:hover {
   background-color: #cccccc;
 }
