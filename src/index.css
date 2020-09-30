@@ -52,9 +52,19 @@ a:active { color: #00eeff }
   color: #000000;
   padding: 15px;
   border-radius: 15px;
+  margin-bottom: 15px;
 }
 #Servers-Add:hover {
   background-color: #51eb59;
+}
+#Servers-Folder {
+  background-color: #f7ff8b;
+  color: #000000;
+  padding: 15px;
+  border-radius: 15px;
+}
+#Servers-Folder:hover {
+  background-color: #dae07b;
 }
 #Servers-List {
   margin-top: 15px;

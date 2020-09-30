@@ -25,10 +25,10 @@ const createWindow = () => {
   mainWindow.loadFile(`${__dirname}/index.html`);
   let ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-color',
-    cols: 80,
+    cols: 90,
     rows: 24,
     cwd: process.env.HOME,
-    env: process.env
+    env: process.env,
   });
   ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
   ipcMain.on('terminal.toTerminal', (event, data) => ptyProcess.write(data));

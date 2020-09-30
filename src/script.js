@@ -5,6 +5,7 @@ const { Terminal } = require('xterm');
 const ipc = require('electron').ipcRenderer;
 const http = require("follow-redirects").http;
 const sharp = require('sharp');
+const { exec } = require('child_process');
 // Navbar Setup
 for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
     c.onclick = () => {
@@ -51,7 +52,9 @@ const retrieveLocalServers = () => {
         let el2 = document.createElement('SPAN');
         el2.innerText = s;
         let IMG = document.createElement('IMG');
-        IMG.src = `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${s}\\server-icon.png`;
+        if (fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${s}\\server-icon.png`)) {
+            IMG.src = `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${s}\\server-icon.png`;
+        }
         IMG.style.float = 'left';
         IMG.style.paddingRight = '15px';
         
@@ -64,6 +67,9 @@ const retrieveLocalServers = () => {
     showLoad();
 };
 retrieveLocalServers();
+const serverFolder = () => {
+    const expl = exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\"`)
+};
 const newServer = () => {
     showTab('NewServer');
     showLoad('Fetching Data');
@@ -113,7 +119,9 @@ const newServer = () => {
                             fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\start.bat`, 'java -Xms512M -Xmx2G -jar server.jar nogui');
                             showLoad('Copying Icon');
                             try {
-                                fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`);
+                                if (document.querySelector('#NewServer-Icon').files.length > 0) {
+                                    fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`);
+                                }
                                 sharp(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`).resize(64, 64).toFile(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon.png`);
                                 showLoad('Saving Data');
                                 try {
@@ -170,7 +178,8 @@ const runTab = tab => {
             retrieveLocalServers();
             break;
         case 'Console':
-            let term = new Terminal();
+            if (document.querySelector('.terminal') !== null) return;
+            let term = new Terminal({ cursorBlink: true });
             term.open(document.querySelector('#Console-Terminal'));
             ipc.send('terminal.toTerminal', 'cls\r');
             term.onData(e => {
@@ -179,7 +188,6 @@ const runTab = tab => {
             ipc.on('terminal.incomingData', (event, data) => {
                 term.write(data);
             });
-            document.querySelector('.xterm-viewport').remove();
             break;
     }
 };
