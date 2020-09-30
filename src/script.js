@@ -1,9 +1,10 @@
 // Imports
-const fs = require("fs");
-const electron = require("electron");
+const fs = require('fs');
+const electron = require('electron');
 const { Terminal } = require('xterm');
 const ipc = require('electron').ipcRenderer;
 const http = require("follow-redirects").http;
+const sharp = require('sharp');
 // Navbar Setup
 for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
     c.onclick = () => {
@@ -112,7 +113,8 @@ const newServer = () => {
                             fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\start.bat`, 'java -Xms512M -Xmx2G -jar server.jar nogui');
                             showLoad('Copying Icon');
                             try {
-                                fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon.png`);
+                                fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`);
+                                sharp(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`).resize(64, 64).toFile(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon.png`);
                                 showLoad('Saving Data');
                                 try {
                                     fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\minecraftservershell.json`, JSON.stringify({
