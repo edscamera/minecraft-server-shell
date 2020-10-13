@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@500&display=swap');
+/* GENERAL */
 body {
   background-color: #4ba7f2;
   font-family: 'Merriweather Sans', sans-serif;
@@ -11,6 +12,7 @@ a {
 }
 a:hover { color: #00ccff }
 a:active { color: #00eeff }
+/* NAVBAR */
 #Navbar {
   background-color: #ffffff;
   color: #4ba7f2;
@@ -19,9 +21,7 @@ a:active { color: #00eeff }
   position: fixed;
   padding-top: 15px;
 }
-#Navbar ul {
-  padding: 0px;
-}
+#Navbar ul { padding: 0px; }
 #Navbar li {
   list-style: none;
   padding: 15px;
@@ -31,40 +31,58 @@ a:active { color: #00eeff }
   background-color: #4ba7f2;
   color: #ffffff;
 }
-#Content {
-  padding: 15px;
-}
+
+/* SERVER LIST */
+.SelectedServer { background-color: #888888!important; }
+#Content { padding: 15px; }
 #Servers-List div {
   background-color: #ffffff;
   color: #000000;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 15px;
+  transition: .3s ease-out;
 }
-#Servers-List img {
-  margin-top: -15px;
+#Servers-List img { margin-top: -15px; }
+#Servers-List div:hover { background-color: #cccccc; }
+/* SERVER BUTTONS */
+#Servers-Buttons  {
+  width: 100%; text-align: center;
 }
-#Servers-List div:hover {
-  background-color: #cccccc;
+.Servers-Button {
+  display: inline-block;
+  text-align: center;
+  color: #000000;
+  padding: 15px;
+  width: 10%;
+  border-radius: 5px;
 }
 #Servers-Add {
   background-color: #57ff5f;
-  color: #000000;
-  padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 15px;
+  transition: .3s ease-out;
 }
 #Servers-Add:hover {
   background-color: #51eb59;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 #Servers-Folder {
   background-color: #f7ff8b;
-  color: #000000;
-  padding: 15px;
-  border-radius: 15px;
+  transition: .3s ease-out;
 }
 #Servers-Folder:hover {
   background-color: #dae07b;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+#Servers-GotoConsole {
+  background-color: #bbbbbb;
+  transition: .3s ease-out;
+}
+#Servers-GotoConsole:hover {
+  background-color: #888888;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 #Servers-List {
   margin-top: 15px;
@@ -72,7 +90,25 @@ a:active { color: #00eeff }
 }
 #Servers-DisplayText {
   font-size: 30px;
+  text-align: center;
 }
+/* CONSOLE */
+#Console-Buttons {
+  text-align: center;
+}
+.Console-Button {
+  display: inline-block;
+  padding: 15px;
+  border: none;
+  margin: 15px;
+  width: 10%;
+  border-radius: 15px;
+  background-color: #bbbbbb;
+}
+.Console-Button:hover {
+  background-color: #888888;
+}
+/* LOADING */
 #Loading {
   position: absolute;
   left: 0px;

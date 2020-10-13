@@ -6,6 +6,8 @@ const ipc = require('electron').ipcRenderer;
 const http = require("follow-redirects").http;
 const sharp = require('sharp');
 const { exec } = require('child_process');
+
+let term = null;
 // Navbar Setup
 for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
     c.onclick = () => {
@@ -16,8 +18,6 @@ for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
         runTab(c.innerText);
     }
 }
-// Content Setup
-document.querySelector('#Content').style.marginLeft = document.querySelector('#Navbar').offsetWidth + 'px';
 // Function Declaration
 const removeChildren = parent => { while (parent.firstChild) parent.removeChild(parent.firstChild); }
 const showLoad = text => {
@@ -26,16 +26,16 @@ const showLoad = text => {
     if (text === undefined) document.querySelector('#Loading').style.display = 'none';
 };
 const showTab = tab => {
+    document.querySelector('#Navbar').style.display = tab === "Servers" || tab === "NewServer" ? 'none' : 'block';
+    document.querySelector('#Content').style.marginLeft = document.querySelector('#Navbar').offsetWidth + 'px';
     for (let t of document.querySelector('#Content').children) {
         t.style.display = 'none';
         if (t.id === tab) t.style.display = 'block';
     }
 }
 showTab('Servers');
-const getDirectories = source =>
-    fs.readdirSync(source, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name)
+window.server = null;
+const getDirectories = source => fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
 const retrieveLocalServers = () => {
     showLoad('Locating Servers')
     removeChildren(document.querySelector('#Servers-List'));
@@ -49,6 +49,12 @@ const retrieveLocalServers = () => {
     document.querySelector('#Servers-DisplayText').innerText = `${serverNames.length} server${serverNames.length !== 1 ? 's' : ''} found!`;
     serverNames.forEach(s => {
         let el = document.createElement('DIV');
+        if (s === window.server) el.classList.add('SelectedServer');
+        el.onclick = () => {
+            window.server = s;
+            for(let c of document.querySelector('#Servers-List').children) c.classList.remove('SelectedServer');
+            el.classList.add('SelectedServer');
+        };
         let el2 = document.createElement('SPAN');
         el2.innerText = s;
         let IMG = document.createElement('IMG');
@@ -69,6 +75,13 @@ const retrieveLocalServers = () => {
 retrieveLocalServers();
 const serverFolder = () => {
     const expl = exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\"`)
+};
+document.querySelector('#Servers-GotoConsole').onclick = () => {
+    if (window.server === null) { alert('PIck a server!'); }
+    else {
+        showTab("Console");
+        runTab("Console");
+    }
 };
 const newServer = () => {
     showTab('NewServer');
@@ -179,15 +192,28 @@ const runTab = tab => {
             break;
         case 'Console':
             if (document.querySelector('.terminal') !== null) return;
-            let term = new Terminal({ cursorBlink: true });
+            
+            term = new Terminal({
+                cursorBlink: true,
+                onTitleChange: event => {
+                    console.log(event);
+                }
+            });
             term.open(document.querySelector('#Console-Terminal'));
             ipc.send('terminal.toTerminal', 'cls\r');
             term.onData(e => {
                 ipc.send('terminal.toTerminal', e);
             });
             ipc.on('terminal.incomingData', (event, data) => {
-                term.write(data);
+                if (!term.disabled) term.write(data);
             });
+            term.clear();
+            ipc.send('terminal.toTerminal', `cd ${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${window.server}\\\r`);
+            ipc.send('terminal.toTerminal', 'cls\r');
             break;
     }
 };
+const startServer = () => ipc.send('terminal.toTerminal', './start.bat\r');
+const stopServer = () => ipc.send('terminal.toTerminal', 'stop\r');
+
+ipc.on('returnPTY', (event, data) => console.log(data));

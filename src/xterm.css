@@ -41,6 +41,7 @@
     user-select: none;
     -ms-user-select: none;
     -webkit-user-select: none;
+    border: 10px outset #A8A8A8;
 }
 
 .xterm.focus,

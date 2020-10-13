@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
 const path = require('path');
 const os = require('os');
 const pty = require('node-pty');
@@ -32,6 +32,9 @@ const createWindow = () => {
   });
   ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
   ipcMain.on('terminal.toTerminal', (event, data) => ptyProcess.write(data));
+  ipcMain.on('getPTY', (event, data) => {
+    mainWindow.webContents.send('returnPTY', ptyProcess._file);
+  });
 };
 
 // This method will be called when Electron has finished

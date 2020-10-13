@@ -9,16 +9,20 @@
   <body>
     <div id='Navbar'>
       <ul>
-        <li class='Selected'>Servers</li>
-        <li>Console</li>
+        <li class='Selected'>Console</li>
+        <li>Options</li>
+        <li>Backups</li>
       </ul>
     </div>
     <div id='Content'>
       <div id='Servers'>
         <div id='Servers-DisplayText'> </div>
         <div id='Servers-List'></div>
-        <div id='Servers-Add' onclick='newServer()'>Add Server</div>
-        <div id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</div>
+        <div id='Servers-Buttons'>
+          <div class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</div>
+          <div class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</div>
+          <div class='Servers-Button' id='Servers-GotoConsole'>Go To Console</div>
+        </div>
       </div>
       <div id='NewServer'>
         <label for='NewServer-ServerName'>Server Name: </label>
@@ -40,6 +44,11 @@
       </div>
       <div id='Console'>
         <div id='Console-Terminal'></div>
+        <div id='Console-Buttons'>
+          <br />
+          <button class='Console-Button' onclick='startServer()'>Start</button>
+          <button class='Console-Button' onclick='stopServer()'>Stop</button>
+        </div>
       </div>
     </div>
     <div id='Loading'>
