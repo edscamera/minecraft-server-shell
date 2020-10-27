@@ -12,6 +12,9 @@ a {
 }
 a:hover { color: #00ccff }
 a:active { color: #00eeff }
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: none;
+}
 /* NAVBAR */
 #Navbar {
   background-color: #ffffff;
@@ -104,9 +107,22 @@ a:active { color: #00eeff }
   width: 10%;
   border-radius: 15px;
   background-color: #bbbbbb;
+  transition: .3s ease-out;
 }
-.Console-Button:hover {
+.Console-Button:hover:enabled {
   background-color: #888888;
+}
+.Console-Button:active:enabled {
+  background-color: #444444;
+  color: #ffffff;
+}
+/* OPTIONS */
+#Options-Textbox {
+  width: 100%;
+  resize: none;
+}
+#Options {
+  text-align: center;
 }
 /* LOADING */
 #Loading {

@@ -18,7 +18,8 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
-    }
+    },
+    icon: `${__dirname}/../icon.png`
   });
 
   // and load the index.html of the app.
@@ -32,9 +33,7 @@ const createWindow = () => {
   });
   ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
   ipcMain.on('terminal.toTerminal', (event, data) => ptyProcess.write(data));
-  ipcMain.on('getPTY', (event, data) => {
-    mainWindow.webContents.send('returnPTY', ptyProcess._file);
-  });
+  ipcMain.on('getPTY', (event, data) => mainWindow.webContents.send('returnPTY', ptyProcess._file));
 };
 
 // This method will be called when Electron has finished

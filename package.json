@@ -46,6 +46,7 @@
     }
   },
   "dependencies": {
+    "electron-packager": "^15.1.0",
     "electron-rebuild": "^2.0.3",
     "electron-squirrel-startup": "^1.0.0",
     "follow-redirects": "^1.13.0",
