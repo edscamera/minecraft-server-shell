@@ -1,20 +1,25 @@
 // Imports
 const fs = require('fs');
+
 const electron = require('electron');
-const { Terminal } = require('xterm');
 const ipc = require('electron').ipcRenderer;
-const http = require("follow-redirects").http;
-const sharp = require('sharp');
+
+const { Terminal } = require('xterm');
+const { FitAddon } = require('xterm-addon-fit');
 const { exec } = require('child_process');
 
+const http = require("follow-redirects").http;
+const resizeImg = require('resize-img');
+
 let term = null;
+let fitAddon = null;
 // Navbar Setup
 for (let c of document.querySelector('#Navbar').querySelector('ul').children) {
     c.onclick = () => {
         if (c.classList.contains('Selected')) return;
         for (let c of document.querySelector('#Navbar').querySelector('ul').children) c.classList.remove('Selected');
         c.classList.toggle('Selected');
-        showTab(c.innerText);
+        showTab(c.innerText.replace(/Game /g, ''));
         runTab(c.innerText);
     }
 }
@@ -33,38 +38,113 @@ const showTab = tab => {
         if (t.id === tab) t.style.display = 'block';
     }
 }
-showTab('Servers');
-window.server = null;
+document.querySelector('#Console-Start').onclick = () => {
+    ipc.send('terminal.toTerminal', './start.bat\r');
+    SERVER_ONLINE = true;
+    document.querySelector('#Console-Start').disabled = SERVER_ONLINE;
+    document.querySelector('#Console-Stop').disabled = !SERVER_ONLINE;
+};
+document.querySelector('#Console-Stop').onclick = () => {
+    ipc.send('terminal.toTerminal', 'stop\r');
+    SERVER_ONLINE = false;
+    document.querySelector('#Console-Start').disabled = SERVER_ONLINE;
+    document.querySelector('#Console-Stop').disabled = !SERVER_ONLINE;
+};
+document.querySelector('#BackServerList').onclick = () => {
+    if (SERVER_ONLINE) {
+        showLoad('');
+        confirmBox('Are you sure you want to quit? This will close the server.').then(data => {
+            if (data.response === 0) {
+                showTab('Servers');
+                retrieveLocalServers();
+                ipc.send('terminal.kill');
+            }
+            showLoad();
+        });
+    }else{
+        showTab('Servers');
+        retrieveLocalServers();
+        ipc.send('terminal.kill');
+    }
+};
+const infoBox = msg => electron.remote.dialog.showMessageBox({type: 'info', title: 'Minecraft Server Shell', message: msg});
+const errBox = msg => electron.remote.dialog.showMessageBox({type: 'error', title: 'Minecraft Server Shell', message: msg});
+const warnBox = msg => electron.remote.dialog.showMessageBox({type: 'warning', title: 'Minecraft Server Shell', message: msg});
+const confirmBox = msg => electron.remote.dialog.showMessageBox({type: 'question', title: 'Minecraft Server Shell', buttons: ["Yes", "Cancel"], message: msg});
 const getDirectories = source => fs.readdirSync(source, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+
+// Rest
+showTab('Servers');
+ipc.send('terminal.kill');
+let SERVER_NAME = null;
+let SERVER_RAW_PATH = `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`;
+let SERVER_PATH = null;
+let SERVER_ONLINE = false;
+// Update Server List
 const retrieveLocalServers = () => {
     showLoad('Locating Servers')
     removeChildren(document.querySelector('#Servers-List'));
-    if (!fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`)) {
-        fs.mkdirSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`);
-    }
-    if (!fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\`)) {
-        fs.mkdirSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\`);
-    }
-    let serverNames = getDirectories(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\`);
+    if (!fs.existsSync(SERVER_RAW_PATH)) fs.mkdirSync(SERVER_RAW_PATH);
+    if (!fs.existsSync(`${SERVER_RAW_PATH}Servers\\`)) fs.mkdirSync(`${SERVER_RAW_PATH}Servers\\`);
+    let serverNames = getDirectories(`${SERVER_RAW_PATH}Servers\\`);
     document.querySelector('#Servers-DisplayText').innerText = `${serverNames.length} server${serverNames.length !== 1 ? 's' : ''} found!`;
     serverNames.forEach(s => {
         let el = document.createElement('DIV');
-        if (s === window.server) el.classList.add('SelectedServer');
+        if (s === SERVER_NAME) el.classList.add('SelectedServer');
         el.onclick = () => {
-            window.server = s;
-            for(let c of document.querySelector('#Servers-List').children) c.classList.remove('SelectedServer');
+            SERVER_NAME = s;
+            SERVER_PATH = SERVER_RAW_PATH + 'Servers\\' + SERVER_NAME + '\\';
+
+            ipc.send('terminal.create', [
+                `cd ${SERVER_PATH}`,
+                `cls`
+            ]);
+
+            if (fs.existsSync(`${SERVER_PATH}logs\\latest.log`)) fs.unlinkSync(`${SERVER_PATH}logs\\latest.log`);
+
+            window.clearInterval(SERVER_ONLINE);
+            SERVER_ONLINE = window.setInterval(() => {
+                if (fs.existsSync(`${SERVER_PATH}logs\\latest.log`)) {
+                    fs.readFile(`${SERVER_PATH}logs\\latest.log`, 'utf8', (err, data) => {
+                        if (data.split('\n')[data.split('\n').length - 2] === undefined || data.split('\n')[data.split('\n').length - 2].includes('[Server thread/INFO]: Closing Server')) {
+                            SERVER_ONLINE = false;
+                            fs.unlinkSync(`${SERVER_PATH}logs\\latest.log`);
+                        }else{
+                            SERVER_ONLINE = true;
+                        }
+                    });
+                }else{
+                    SERVER_ONLINE = false;
+                }
+            }, 5000);
+            for(let c of document.querySelector('#Servers-List').children) {
+                c.classList.remove('SelectedServer');
+                c.querySelector('.ACCEPT').style.display = 'none';
+            }
             el.classList.add('SelectedServer');
+            el.querySelector('.ACCEPT').style.display = 'block';
         };
+
         let el2 = document.createElement('SPAN');
         el2.innerText = s;
+
         let IMG = document.createElement('IMG');
-        if (fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${s}\\server-icon.png`)) {
-            IMG.src = `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${s}\\server-icon.png`;
-        }
+        if (fs.existsSync(`${SERVER_RAW_PATH}Servers\\${s}\\server-icon.png`)) IMG.src = `${SERVER_RAW_PATH}Servers\\${s}\\server-icon.png`;
         IMG.style.float = 'left';
         IMG.style.paddingRight = '15px';
         
-        el.append(IMG, el2);
+        let ACCEPT = document.createElement('SPAN');
+        ACCEPT.classList.add('ACCEPT');
+        ACCEPT.innerText = '▶';
+        ACCEPT.onclick = () => {
+            if (SERVER_NAME === null) { warnBox('Pick a server!'); }
+            else {
+                showTab("Console");
+                runTab("Console");
+            }
+        };
+
+        el.append(IMG, el2, ACCEPT);
         document.querySelector('#Servers-List').appendChild(el);
 
         IMG.style.height = '50px';
@@ -74,13 +154,6 @@ const retrieveLocalServers = () => {
 };
 retrieveLocalServers();
 const serverFolder = () => exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\"`);
-document.querySelector('#Servers-GotoConsole').onclick = () => {
-    if (window.server === null) { warnBox('Pick a server!'); }
-    else {
-        showTab("Console");
-        runTab("Console");
-    }
-};
 const newServer = () => {
     showTab('NewServer');
     showLoad('Fetching Data');
@@ -114,45 +187,51 @@ const newServer = () => {
         if (!document.querySelector('#NewServer-EULA').checked) return;
         showLoad('Downloading JAR');
         let serverName = document.querySelector('#NewServer-ServerName').value.replace(/\/||\\||\||\|||./g, '');
-        fs.mkdir(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}`, err => {
+        let newServerPath = SERVER_RAW_PATH + 'Servers\\' + serverName + '\\';
+        fs.mkdir(newServerPath, err => {
             if (err === null) {
                 try {
-                    let file = fs.createWriteStream(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server.jar`);
+                    let file = fs.createWriteStream(`${newServerPath}server.jar`);
                     let request = http.get(`http://papermc.io/api/v1/paper/${document.querySelector('#NewServer-VersionSelect').value}/${document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]}/download`, response => {
                         response.pipe(file);
                     });
                     console.log(`http://papermc.io/api/v1/paper/${document.querySelector('#NewServer-VersionSelect').value}/${document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]}/download`);
                     showLoad('Accepting EULA');
                     try {
-                        fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\eula.txt`, 'eula=true');
+                        fs.writeFileSync(`${newServerPath}eula.txt`, 'eula=true');
                         showLoad('Creating Start Task');
                         try {
-                            fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\start.bat`, 'java -Xms512M -Xmx2G -jar server.jar nogui');
+                            fs.writeFileSync(`${newServerPath}start.bat`, 'java -Xms512M -Xmx2G -jar server.jar nogui');
                             showLoad('Copying Icon');
                             try {
                                 if (document.querySelector('#NewServer-Icon').files.length > 0) {
-                                    fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`);
+                                    fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${newServerPath}server-icon-original.png`);
                                 }
-                                sharp(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon-original.png`).resize(64, 64).toFile(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\server-icon.png`, (err, data) => {
-                                    retrieveLocalServers();
-                                });
-                                showLoad('Saving Data');
-                                try {
-                                    fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${serverName}\\minecraftservershell.json`, JSON.stringify({
-                                        server: {
-                                            version: document.querySelector('#NewServer-VersionSelect').value,
-                                            build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
-                                        },
-                                        memory: '2G'
-                                    }));
-                                    showLoad();
-                                    showTab('Servers');
-                                    retrieveLocalServers();
-                                } catch (err5) {
-                                    errBox(`An unknown error occured creating the json data.\n\n${err5}`);
-                                    showLoad();
-                                    showTab('Servers');
-                                }
+                                (async () => {
+                                    const image = await resizeImg(fs.readFileSync(`${newServerPath}server-icon-original.png`), {
+                                        width: 64,
+                                        height: 64
+                                    });
+                                 
+                                    fs.writeFileSync(`${newServerPath}server-icon.png`, image);
+                                    showLoad('Saving Data');
+                                    try {
+                                        fs.writeFileSync(`${newServerPath}minecraftservershell.json`, JSON.stringify({
+                                            server: {
+                                                version: document.querySelector('#NewServer-VersionSelect').value,
+                                                build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
+                                            },
+                                            memory: '2G'
+                                        }));
+                                        showLoad();
+                                        showTab('Servers');
+                                        retrieveLocalServers();
+                                    } catch (err5) {
+                                        errBox(`An unknown error occured creating the json data.\n\n${err5}`);
+                                        showLoad();
+                                        showTab('Servers');
+                                    }
+                                })();
                             } catch (err4) {
                                 errBox(`An uknown error occured copying the icon.\n\n${err4}`);
                                 showLoad();
@@ -187,7 +266,7 @@ const newServer = () => {
 };
 const loadServerProperties = () => {
     showLoad('Fetching Options');
-    if (!fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${window.server}\\server.properties`)) {
+    if (!fs.existsSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${SERVER_NAME}\\server.properties`)) {
         warnBox('You must run the server once before you change settings!');
         showLoad();
         showTab('Console');
@@ -196,14 +275,14 @@ const loadServerProperties = () => {
         return;
     }
     showLoad();
-    document.querySelector('#Options-Textbox').value = fs.readFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${window.server}\\server.properties`, 'utf8');
+    document.querySelector('#Options-Textbox').value = fs.readFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${SERVER_NAME}\\server.properties`, 'utf8');
     document.querySelector('#Options-Textbox').style.height = document.querySelector('#Options-Textbox').scrollHeight - 4 + 'px';
     document.querySelector('#Options-Textbox').oninput = () => document.querySelector('#Options-Textbox').style.height = document.querySelector('#Options-Textbox').scrollHeight - 4 + 'px';
     document.querySelector('#Options-Save').onclick = () => {
         showLoad('Saving Options');
         let t = true;
         try {
-            fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${window.server}\\server.properties`, document.querySelector('#Options-Textbox').value);
+            fs.writeFileSync(`${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${SERVER_NAME}\\server.properties`, document.querySelector('#Options-Textbox').value);
             t = true;
         }
         catch(e) {
@@ -211,7 +290,7 @@ const loadServerProperties = () => {
             t = false;
         }
         if (t) {
-            if (term.inJar) {
+            if (SERVER_ONLINE) {
                 infoBox('Options saved! Restarting server...');
                 ipc.send('terminal.toTerminal', 'reload confirm\r');
             }
@@ -231,11 +310,19 @@ const runTab = tab => {
             
             term = new Terminal({
                 cursorBlink: true,
+                rendererType: 'canvas',
+                
                 onTitleChange: event => {
                     console.log(event);
                 }
             });
+            fitAddon = new FitAddon();
+            term.loadAddon(fitAddon);
             term.open(document.querySelector('#Console-Terminal'));
+
+            window.addEventListener('resize', () => fitAddon.fit());
+            fitAddon.fit();            
+            
             term.inJar = false;
             document.querySelector('#Console-Start').disabled = term.inJar;
             document.querySelector('#Console-Stop').disabled = !term.inJar;
@@ -259,30 +346,14 @@ const runTab = tab => {
                 if (!term.disabled) term.write(data);
                 term.inJar = data.includes(']: ');
             });
-            term.clear();
-            ipc.send('terminal.toTerminal', `cd ${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${window.server}\\\r`);
+            ipc.send('terminal.toTerminal', `cd ${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${SERVER_NAME}\\\r`);
             ipc.send('terminal.toTerminal', 'cls\r');
+            console.log('te222st')
+            term.clear();
+            
             break;
-        case 'Options':
+        case 'Game Options':
             loadServerProperties();
             break;
     }
 };
-document.querySelector('#Console-Start').onclick = () => {
-    ipc.send('terminal.toTerminal', './start.bat\r');
-    term.inJar = true;
-    document.querySelector('#Console-Start').disabled = term.inJar;
-    document.querySelector('#Console-Stop').disabled = !term.inJar;
-};
-document.querySelector('#Console-Stop').onclick = () => {
-    ipc.send('terminal.toTerminal', 'stop\r');
-    term.inJar = false;
-    document.querySelector('#Console-Start').disabled = term.inJar;
-    document.querySelector('#Console-Stop').disabled = !term.inJar;
-};
-
-ipc.on('returnPTY', (event, data) => console.log(data));
-
-const infoBox = msg => electron.remote.dialog.showMessageBox({type: 'info', title: 'Minecraft Server Shell', message: msg});
-const errBox = msg => electron.remote.dialog.showMessageBox({type: 'error', title: 'Minecraft Server Shell', message: msg});
-const warnBox = msg => electron.remote.dialog.showMessageBox({type: 'warning', title: 'Minecraft Server Shell', message: msg});

@@ -10,8 +10,11 @@
     <div id='Navbar'>
       <ul>
         <li class='Selected'>Console</li>
-        <li>Options</li>
+        <li>Game Options</li>
         <li>Backups</li>
+      </ul>
+      <ul id='Navbar-Bottom'>
+        <li id='BackServerList'>Back</li>
       </ul>
     </div>
     <div id='Content'>
@@ -19,9 +22,8 @@
         <div id='Servers-DisplayText'> </div>
         <div id='Servers-List'></div>
         <div id='Servers-Buttons'>
-          <div class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</div>
-          <div class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</div>
-          <div class='Servers-Button' id='Servers-GotoConsole'>Go To Console</div>
+          <button class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</button>
+          <button class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</button>
         </div>
       </div>
       <div id='NewServer'>
@@ -37,7 +39,7 @@
         <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
         <select id='NewServer-BuildSelect'></select>
         <br /><br />
-        <label for='NewServer-EULA'>Do you agree to the <a onclick='electron.shell.openExternal("https:/\/account.mojang.com/documents/minecraft_eula")'>Minecraft EULA</a>?</label>
+        <label for='NewServer-EULA'>Do you agree to the <a onclick='electron.shell.openExternal("https:\/\/account.mojang.com/documents/minecraft_eula")'>Minecraft EULA</a>?</label>
         <input type='checkbox' id='NewServer-EULA'>
         <br /><br />
         <button id='NewServer-JarDownload' disabled>Create</button>

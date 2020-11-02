@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@500&display=swap');
 /* GENERAL */
 body {
-  background-color: #4ba7f2;
+  background-color: #57839e;
   font-family: 'Merriweather Sans', sans-serif;
   margin: 0px;
   user-select: none;
@@ -18,7 +18,7 @@ input:focus, textarea:focus, select:focus, button:focus {
 /* NAVBAR */
 #Navbar {
   background-color: #ffffff;
-  color: #4ba7f2;
+  color: var(--color-one);
   height: 100%;
   width: 300px;
   position: fixed;
@@ -30,14 +30,22 @@ input:focus, textarea:focus, select:focus, button:focus {
   padding: 15px;
   transition: ease-out 0.4s;
 }
-.Selected {
-  background-color: #4ba7f2;
+#Navbar-Bottom {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+#Navbar-Bottom li:hover {
+  background-color: #57839e;
   color: #ffffff;
 }
-
+.Selected {
+  background-color: #57839e;
+  color: #ffffff;
+}
+#Content { padding: 15px; }
 /* SERVER LIST */
 .SelectedServer { background-color: #888888!important; }
-#Content { padding: 15px; }
 #Servers-List div {
   background-color: #ffffff;
   color: #000000;
@@ -45,6 +53,9 @@ input:focus, textarea:focus, select:focus, button:focus {
   margin-bottom: 15px;
   border-radius: 15px;
   transition: .3s ease-out;
+  max-width: 50%;
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 #Servers-List img { margin-top: -15px; }
 #Servers-List div:hover { background-color: #cccccc; }
@@ -64,29 +75,12 @@ input:focus, textarea:focus, select:focus, button:focus {
   background-color: #57ff5f;
   transition: .3s ease-out;
 }
-#Servers-Add:hover {
-  background-color: #51eb59;
-  padding-left: 30px;
-  padding-right: 30px;
-}
+#Servers-Add:hover { background-color: #48d14f; }
 #Servers-Folder {
   background-color: #f7ff8b;
   transition: .3s ease-out;
 }
-#Servers-Folder:hover {
-  background-color: #dae07b;
-  padding-left: 30px;
-  padding-right: 30px;
-}
-#Servers-GotoConsole {
-  background-color: #bbbbbb;
-  transition: .3s ease-out;
-}
-#Servers-GotoConsole:hover {
-  background-color: #888888;
-  padding-left: 30px;
-  padding-right: 30px;
-}
+#Servers-Folder:hover { background-color: #c6cc70; }
 #Servers-List {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -95,11 +89,19 @@ input:focus, textarea:focus, select:focus, button:focus {
   font-size: 30px;
   text-align: center;
 }
+.ACCEPT {
+  display: none;
+  float: right;
+  transition: .3s ease-in-out;
+}
+.ACCEPT:hover {
+  transform: translateX(5px) scale(1.1);
+}
 /* CONSOLE */
 #Console-Buttons {
   text-align: center;
 }
-.Console-Button {
+button {
   display: inline-block;
   padding: 15px;
   border: none;
@@ -109,15 +111,17 @@ input:focus, textarea:focus, select:focus, button:focus {
   background-color: #bbbbbb;
   transition: .3s ease-out;
 }
-.Console-Button:hover:enabled {
+button:hover:enabled {
   background-color: #888888;
 }
-.Console-Button:active:enabled {
+button:active:enabled {
   background-color: #444444;
   color: #ffffff;
 }
 /* OPTIONS */
 #Options-Textbox {
+  font-family: 'Merriweather Sans', sans-serif;
+
   width: 100%;
   resize: none;
 }

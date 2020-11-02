@@ -1,7 +1,8 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
+const { app, BrowserWindow, ipcMain, ipcRenderer, dialog } = require('electron');
 const path = require('path');
 const os = require('os');
 const pty = require('node-pty');
+const fs = require('fs');
 const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -9,9 +10,12 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
+let mainWindow = null;
+let ptyProcess = null;
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     autoHideMenuBar: true,
@@ -24,16 +28,40 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   mainWindow.loadFile(`${__dirname}/index.html`);
-  let ptyProcess = pty.spawn(shell, [], {
-    name: 'xterm-color',
-    cols: 90,
-    rows: 24,
-    cwd: process.env.HOME,
-    env: process.env,
+  mainWindow.on('close', event => {
+    event.preventDefault();
+    dialog.showMessageBox({
+      type: 'question',
+      title: 'Minecraft Server Shell',
+      buttons: ["Yes", "No"],
+      message: "Are you sure you want to quit? This will close the server."
+    }).then(data => {
+      if (data.response === 0) {
+        mainWindow.destroy();
+      }
+    });
+  })
+  ipcMain.on('terminal.create', (event, data) => {
+    if (ptyProcess === null) {
+      ptyProcess = pty.spawn(shell, [], {
+        name: 'xterm-color',
+        cols: 73,
+        rows: 24,
+        cwd: process.env.HOME,
+        env: process.env,
+      });
+      ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
+      
+      data.forEach(cmd => ptyProcess.write(`${cmd}\r`));
+    }
   });
-  ptyProcess.on('data', data => mainWindow.webContents.send('terminal.incomingData', data));
-  ipcMain.on('terminal.toTerminal', (event, data) => ptyProcess.write(data));
-  ipcMain.on('getPTY', (event, data) => mainWindow.webContents.send('returnPTY', ptyProcess._file));
+  ipcMain.on('terminal.toTerminal', (event, data) => {
+    if (ptyProcess !== null) ptyProcess.write(data);
+  });
+  ipcMain.on('terminal.kill', (event, data) => {
+    if (ptyProcess !== null) ptyProcess.kill();
+    ptyProcess = null;
+  });
 };
 
 // This method will be called when Electron has finished
