@@ -128,6 +128,27 @@ button:active:enabled {
 #Options {
   text-align: center;
 }
+/* BACKUPS */
+#Backups {
+  width: 100%;
+  text-align: center;
+}
+.Backups-Tab {
+  display: inline-block;
+  width: 45%;
+  padding: 15px;
+}
+.Backups-Label {
+  text-align: center;
+  font-size: 30px;
+  padding-bottom: 15px;
+}
+.Backups-List {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: left;
+}
 /* LOADING */
 #Loading {
   position: absolute;

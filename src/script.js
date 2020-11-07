@@ -153,6 +153,37 @@ const retrieveLocalServers = () => {
     showLoad();
 };
 retrieveLocalServers();
+// Update Backups Tab
+const refreshBackups = () => {
+    showLoad("Loading Server Data")
+    let files = fs.readdirSync(SERVER_PATH, { withFileTypes: true }).filter(dirent => !['backups', 'minecraftservershell.json'].includes(dirent.name));
+    let backupList = document.querySelector('#Backups-BackupList');
+    let autoCheck = [
+        "world",
+        "world_nether",
+        "world_the_end",
+        "server.properties"
+    ]
+    files.forEach(file => {
+        let container = document.createElement('DIV');
+
+        let label = document.createElement('SPAN');
+        label.innerText = file.name;
+
+        let icon = document.createElement('SPAN');
+        icon.innerText = file.isDirectory() ? '📁' : '📄';
+        icon.style.paddingLeft = '5px';
+        icon.style.paddingRight = '5px';
+
+        let checkBox = document.createElement('INPUT');
+        checkBox.type = 'checkbox';
+        checkBox.checked = autoCheck.includes(file.name);
+        
+        container.append(checkBox, icon, label);
+        backupList.appendChild(container);
+    });
+    showLoad();
+};
 const serverFolder = () => exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\"`);
 const newServer = () => {
     showTab('NewServer');
@@ -308,14 +339,7 @@ const runTab = tab => {
         case 'Console':
             if (document.querySelector('.terminal') !== null) return;
             
-            term = new Terminal({
-                cursorBlink: true,
-                rendererType: 'canvas',
-                
-                onTitleChange: event => {
-                    console.log(event);
-                }
-            });
+            term = new Terminal({ cursorBlink: true });
             fitAddon = new FitAddon();
             term.loadAddon(fitAddon);
             term.open(document.querySelector('#Console-Terminal'));
@@ -348,12 +372,13 @@ const runTab = tab => {
             });
             ipc.send('terminal.toTerminal', `cd ${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers\\${SERVER_NAME}\\\r`);
             ipc.send('terminal.toTerminal', 'cls\r');
-            console.log('te222st')
             term.clear();
-            
             break;
         case 'Game Options':
             loadServerProperties();
+            break;
+        case 'Backups':
+            refreshBackups();
             break;
     }
 };
