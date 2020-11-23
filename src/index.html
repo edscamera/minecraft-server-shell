@@ -1,83 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>Minecraft Server Shell</title>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="xterm.css">
-  </head>
-  <body>
+</head>
+
+<body>
     <div id='Navbar'>
-      <ul>
-        <li class='Selected'>Console</li>
-        <li>Game Options</li>
-        <li>Backups</li>
-      </ul>
-      <ul id='Navbar-Bottom'>
-        <li id='BackServerList'>Back</li>
-      </ul>
+        <ul>
+            <li class='Selected'>Console</li>
+            <li>Game Options</li>
+            <li>Backups</li>
+        </ul>
+        <ul id='Navbar-Bottom'>
+            <li id='Navbar-Back'>Back</li>
+        </ul>
     </div>
     <div id='Content'>
-      <div id='Servers'>
-        <div id='Servers-DisplayText'> </div>
-        <div id='Servers-List'></div>
-        <div id='Servers-Buttons'>
-          <button class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</button>
-          <button class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</button>
+        <div id='Servers'>
+            <div id='Servers-DisplayText'> </div>
+            <div id='Servers-List'></div>
+            <div id='Servers-Buttons'>
+                <button class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</button>
+                <button class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</button>
+            </div>
         </div>
-      </div>
-      <div id='NewServer'>
-        <label for='NewServer-ServerName'>Server Name: </label>
-        <input type='text' id='NewServer-ServerName'>
-        <br /><br />
-        <label for='NewServer-Icon'>Server Icon: </label>
-        <input type='file' id='NewServer-Icon' accept="image/png">
-        <br /><br />
-        <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
-        <select id='NewServer-VersionSelect'></select>
-        <br /><br />
-        <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
-        <select id='NewServer-BuildSelect'></select>
-        <br /><br />
-        <label for='NewServer-EULA'>Do you agree to the <a onclick='electron.shell.openExternal("https:\/\/account.mojang.com/documents/minecraft_eula")'>Minecraft EULA</a>?</label>
-        <input type='checkbox' id='NewServer-EULA'>
-        <br /><br />
-        <button id='NewServer-JarDownload' disabled>Create</button>
-      </div>
-      <div id='Console'>
-        <div id='Console-Terminal'></div>
-        <div id='Console-Buttons'>
-          <br />
-          <button class='Console-Button' id='Console-Start'>Start</button>
-          <button class='Console-Button' id='Console-Stop'>Stop</button>
+        <div id='NewServer'>
+            <label for='NewServer-ServerName'>Server Name: </label>
+            <input type='text' id='NewServer-ServerName'>
+            <br /><br />
+            <label for='NewServer-Icon'>Server Icon: </label>
+            <input type='file' id='NewServer-Icon' accept="image/png">
+            <br /><br />
+            <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
+            <select id='NewServer-VersionSelect'></select>
+            <br /><br />
+            <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
+            <select id='NewServer-BuildSelect'></select>
+            <br /><br />
+            <label for='NewServer-EULA'>Do you agree to the <a
+                    onclick='electron.shell.openExternal("https:\/\/account.mojang.com/documents/minecraft_eula")'>Minecraft
+                    EULA</a>?</label>
+            <input type='checkbox' id='NewServer-EULA'>
+            <br /><br />
+            <button id='NewServer-JarDownload' disabled>Create</button>
         </div>
-      </div>
-      <div id='Options'>
-        <textarea id='Options-Textbox'></textarea>
-        <button class='Console-Button' id='Options-Save'>Save</button>
-      </div>
-      <div id='Backups'>
-        <div class='Backups-Tab'>
-          <div class='Backups-Label'>Backup</div>
-          <div class='Backups-List' id='Backups-BackupList'>
-            
-          </div>
+        <div id='Console'>
+            <div id='Console-Terminal'></div>
+            <div id='Console-Buttons'>
+                <br />
+                <button class='Console-Button' id='Console-Start'>Start</button>
+                <button class='Console-Button' id='Console-Stop'>Stop</button>
+            </div>
         </div>
-        <div class='Backups-Tab'>
-          <div class='Backups-Label'>Restore</div>
-          <div class='Backups-List' id='Backups-RestoreList'>
-            none
-          </div>
+        <div id='Options'>
+            <textarea id='Options-Textbox'></textarea>
+            <button class='Console-Button' id='Options-Save'>Save</button>
         </div>
-      </div>
+        <div id='Backups'>
+            <div class='Backups-Tab'>
+                <div class='Backups-Label'>Backup</div>
+                <div class='Backups-List' id='Backups-BackupList'>
+
+                </div>
+            </div>
+            <div class='Backups-Tab'>
+                <div class='Backups-Label'>Restore</div>
+                <div class='Backups-List' id='Backups-RestoreList'>
+                    none
+                </div>
+            </div>
+        </div>
     </div>
     <div id='Loading'>
-      <div id='Loading-Background'></div>
-      <div id='Loading-Subcontainer'>
-        <div id='Loading-Icon'></div>
-        <h1 id='Loading-Text'>Loading</h1>
-      </div>
+        <div id='Loading-Background'></div>
+        <div id='Loading-Subcontainer'>
+            <div id='Loading-Icon'></div>
+            <h1 id='Loading-Text'>Loading</h1>
+        </div>
     </div>
     <script src='script.js'></script>
-  </body>
+</body>
+
 </html>
