@@ -1,5 +1,6 @@
 // Imports
 const fs = require('fs-extra');
+const download = require('download');
 
 const electron = require('electron');
 const ipc = require('electron').ipcRenderer;
@@ -18,6 +19,8 @@ let SERVER_RAW_PATH = `${process.env.LOCALAPPDATA}\\MinecraftServerShell\\`;
 let SERVER_PATH = null;
 let SERVER_ONLINE = false;
 let SERVER_ONLINE_LOOP = null;
+let SERVER_BACKUP_WATCHER = null;
+let SERVER_FILE_WATCHER = null;
 
 // Function Declaration
 const removeChildren = parent => { while (parent.firstChild) parent.removeChild(parent.firstChild); }
@@ -71,6 +74,8 @@ window.addEventListener('load', () => {
             retrieveLocalServers();
             ipc.send('terminal.kill');
         }
+        if (SERVER_BACKUP_WATCHER !== null) SERVER_BACKUP_WATCHER.close();
+        if (SERVER_FILE_WATCHER !== null) SERVER_FILE_WATCHER.close();
     };
 
     // Reset Terminal && Show Server Select Menu
@@ -78,7 +83,10 @@ window.addEventListener('load', () => {
     ipc.send('terminal.kill');
 
     // Folder Watches
-    fs.watchFile(`${SERVER_RAW_PATH}Servers`, {}, () => retrieveLocalServers());
+    fs.watchFile(`${SERVER_RAW_PATH}Servers`, {}, () => {
+        retrieveLocalServers();
+        showLoad();
+    });
 
     // Console Clear
     window.setTimeout(console.clear, 1000);
@@ -100,8 +108,6 @@ document.querySelector('#Console-Stop').onclick = () => {
 
 // Update Server List
 (window.retrieveLocalServers = () => {
-    showLoad('Locating Servers');
-
     removeChildren(document.querySelector('#Servers-List'));
     let serverNames = fs.readdirSync(`${SERVER_RAW_PATH}Servers\\`, { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
     document.querySelector('#Servers-DisplayText').innerText = `${serverNames.length} server${serverNames.length !== 1 ? 's' : ''} found!`;
@@ -111,8 +117,9 @@ document.querySelector('#Console-Stop').onclick = () => {
         serverDiv.addEventListener('click', () => {
             SERVER_NAME = name;
             SERVER_PATH = `${SERVER_RAW_PATH}Servers\\${SERVER_NAME}\\`;
-            fs.watchFile(`${SERVER_PATH}backups`, {}, () => refreshBackups());
-            fs.watchFile(`${SERVER_PATH}`, {}, () => refreshBackups());
+
+            SERVER_BACKUP_WATCHER = fs.watchFile(`${SERVER_PATH}backups`, {}, () => refreshBackups());
+            SERVER_FILE_WATCHER = fs.watchFile(`${SERVER_PATH}`, {}, () => refreshBackups());
 
             // Create terminal
             ipc.send('terminal.create', [`cd ${SERVER_PATH}`, `cls`]);
@@ -176,7 +183,6 @@ document.querySelector('#Console-Stop').onclick = () => {
             width: '50px',
         }
     });
-    showLoad();
 })();
 // Backups
 const refreshBackups = () => {
@@ -331,83 +337,80 @@ const newServer = () => {
         let serverName = document.querySelector('#NewServer-ServerName').value.replace(/\/||\\||\||\|||./g, '');
         let newServerPath = SERVER_RAW_PATH + 'Servers\\' + serverName + '\\';
         // Create Server Folder
-        fs.mkdir(newServerPath, err => {
-            const defaultFiles = [
-                {
-                    path: `${newServerPath}eula.txt`,
-                    data: 'eula=true',
-                    loadingText: 'Accepting EULA',
-                    overwrite: null,
-                },
-                {
-                    path: `${newServerPath}start.bat`,
-                    data: 'java -Xms512M -Xmx2G -jar server.jar nogui',
-                    loadingText: 'Creating Start Task',
-                    overwrite: null,
-                },
-                {
-                    path: `${newServerPath}minecraftservershell.json`,
-                    data: JSON.stringify({
-                        server: {
-                            version: document.querySelector('#NewServer-VersionSelect').value,
-                            build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
-                        },
-                        memory: '2G',
-                    }),
-                    loadingText: 'Saving Data',
-                    overwrite: null,
-                },
-                {
-                    loadingText: 'Copying Icon',
-                    overwrite: (async () => {
-                        if (document.querySelector('#NewServer-Icon').files.length > 0) {
-                            fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${newServerPath}server-icon-original.png`);
-                            let img = await resizeImg(fs.readFileSync(`${newServerPath}server-icon-original.png`), {
-                                width: 64,
-                                height: 64
-                            });
-                            fs.writeFileSync(`${newServerPath}server-icon.png`, img);
-                        }
-                        retrieveLocalServers();
-                    }),
-                },
-            ];
-            if (err) {
-                if (document.querySelector('#NewServer-ServerName').value === '') {
-                    warnBox('Server name cannot be empty!');
-                } else {
-                    errBox(`An unknown error occurred creating the folder.\n\n${err}`);
+        if (document.querySelector('#NewServer-ServerName').value === '') return warnBox('Server name cannot be empty!');
+
+        try {
+            fs.mkdirSync(newServerPath);
+        } catch (err) {
+            errBox(`An unknown error occurred while creating the folder.\n\n${err}`);
+            showLoad();
+            showTab('Servers');
+            return;
+        }
+        // Get Server JAR
+        showLoad('Downloading JAR');
+        let version = document.querySelector('#NewServer-VersionSelect').value;
+        let build = document.querySelector('#NewServer-BuildSelect').value.split(' ')[0];
+        let url = `http://papermc.io/api/v1/paper/${version}/${build}/download`;
+
+        const defaultFiles = [
+            {
+                path: `${newServerPath}eula.txt`,
+                data: 'eula=true',
+                loadingText: 'Accepting EULA',
+                overwrite: null,
+            },
+            {
+                path: `${newServerPath}start.bat`,
+                data: 'java -Xms512M -Xmx2G -jar server.jar nogui',
+                loadingText: 'Creating Start Task',
+                overwrite: null,
+            },
+            {
+                path: `${newServerPath}minecraftservershell.json`,
+                data: JSON.stringify({
+                    server: {
+                        version: document.querySelector('#NewServer-VersionSelect').value,
+                        build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
+                    },
+                    memory: '2G',
+                }),
+                loadingText: 'Saving Data',
+                overwrite: null,
+            },
+            {
+                loadingText: 'Copying Icon',
+                overwrite: (async () => {
+                    if (document.querySelector('#NewServer-Icon').files.length > 0) {
+                        fs.copyFileSync(document.querySelector('#NewServer-Icon').files[0].path, `${newServerPath}server-icon-original.png`);
+                        let img = await resizeImg(fs.readFileSync(`${newServerPath}server-icon-original.png`), {
+                            width: 64,
+                            height: 64
+                        });
+                        fs.writeFileSync(`${newServerPath}server-icon.png`, img);
+                    }
+                    retrieveLocalServers();
                     showLoad();
-                    showTab('Servers');
-                }
-                return;
-            }
-            // Get Server JAR
-            showLoad('Downloading JAR');
-            let file = fs.createWriteStream(`${newServerPath}server.jar`);
-            file.on('open', () => {
-                http.get(`http://papermc.io/api/v1/paper/${document.querySelector('#NewServer-VersionSelect').value}/${document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]}/download`, response => {
-                    response.pipe(file);
-                    file.on('finish', () => file.close());
-                });
+                }),
+            },
+        ];
+
+        (async () => {
+            fs.writeFileSync(`${newServerPath}server.jar`, await download(url));
+
+            defaultFiles.forEach(task => {
+                showLoad(task.loadingText);
+                if (task.overwrite) task.overwrite();
+                else fs.writeFileSync(task.path, task.data);
             });
-            file.on('close', () => {
-                // Write Required Server Files
-                defaultFiles.forEach(task => {
-                    showLoad(task.loadingText);
-                    if (task.overwrite) task.overwrite();
-                    else fs.writeFileSync(task.path, task.data);
-                });
-                showLoad();
-                retrieveLocalServers();
-                showTab('Servers');
-            });
-        });
+
+            retrieveLocalServers();
+            infoBox('Server created!');
+            showTab('Servers');
+        })();
     };
 };
-const serverFolder = () => {
-    exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers"`);
-};
+const serverFolder = () => exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers"`);
 const loadServerProperties = () => {
     showLoad('Fetching Options');
     // Check if options exist
