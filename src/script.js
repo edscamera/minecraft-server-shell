@@ -1,5 +1,5 @@
 // Imports
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const electron = require('electron');
 const ipc = require('electron').ipcRenderer;
@@ -10,6 +10,7 @@ const { exec } = require('child_process');
 
 const http = require("follow-redirects").http;
 const resizeImg = require('resize-img');
+const { read } = require('fs');
 
 // Variable Declaration
 let SERVER_NAME = null;
@@ -76,6 +77,10 @@ window.addEventListener('load', () => {
     showTab('Servers');
     ipc.send('terminal.kill');
 
+    // Folder Watches
+    fs.watchFile(`${SERVER_RAW_PATH}Servers`, {}, () => retrieveLocalServers());
+
+    // Console Clear
     window.setTimeout(console.clear, 1000);
 });
 
@@ -106,12 +111,11 @@ document.querySelector('#Console-Stop').onclick = () => {
         serverDiv.addEventListener('click', () => {
             SERVER_NAME = name;
             SERVER_PATH = `${SERVER_RAW_PATH}Servers\\${SERVER_NAME}\\`;
+            fs.watchFile(`${SERVER_PATH}backups`, {}, () => refreshBackups());
+            fs.watchFile(`${SERVER_PATH}`, {}, () => refreshBackups());
 
             // Create terminal
-            ipc.send('terminal.create', [
-                `cd ${SERVER_PATH}`,
-                `cls`
-            ]);
+            ipc.send('terminal.create', [`cd ${SERVER_PATH}`, `cls`]);
 
             // Server acticity detection
             if (fs.existsSync(`${SERVER_PATH}logs\\latest.log`)) fs.unlinkSync(`${SERVER_PATH}logs\\latest.log`);
@@ -174,13 +178,16 @@ document.querySelector('#Console-Stop').onclick = () => {
     });
     showLoad();
 })();
-// Update Backups Tab
+// Backups
 const refreshBackups = () => {
     showLoad("Loading Server Data");
+    if (!fs.existsSync(`${SERVER_PATH}\\backups`)) fs.mkdirSync(`${SERVER_PATH}\\backups`);
     let files = fs.readdirSync(SERVER_PATH, { withFileTypes: true }).filter(dirent => !['backups', 'minecraftservershell.json'].includes(dirent.name));
     let backupList = document.querySelector('#Backups-BackupList');
     let autoCheck = ["world", "world_nether", "world_the_end", "server.properties"];
+    removeChildren(backupList);
     files.forEach(file => {
+        // Backup List
         let container = document.createElement('DIV');
 
         let label = Object.assign(document.createElement('SPAN'), { innerText: file.name });
@@ -199,8 +206,97 @@ const refreshBackups = () => {
         container.append(checkBox, icon, label);
         backupList.appendChild(container);
     });
+
+    // Restore List
+    files = fs.readdirSync(`${SERVER_PATH}backups`, { withFileTypes: true }).map(dirent => dirent.name);
+    let restoreList = document.querySelector('#Backups-RestoreList');
+    removeChildren(restoreList);
+    files.forEach(file => {
+        let container = document.createElement('DIV');
+        container.style.paddingBottom = '1px';
+
+        let label = Object.assign(document.createElement('SPAN'), { innerText: file });
+        let buttonContainer = document.createElement('DIV');
+
+        let check = Object.assign(document.createElement('SPAN'), { innerText: 'RESTORE' });
+        check.onmouseenter = () => check.style.color = '#008800';
+        (check.onmouseout = () => check.style.color = '#00ff00')();
+        check.style.paddingLeft = '20px';
+        check.onclick = () => {
+            confirmBox(`Are you sure you want to load backup "${file}"?`).then(data => {
+                if (data.response === 1) return;
+                if (SERVER_ONLINE) return warnBox('You cannot restore backups when the server is running!');
+                restore(file);
+            });
+        };
+        let cross = Object.assign(document.createElement('SPAN'), { innerText: 'DELETE' });
+        cross.onmouseenter = () => cross.style.color = '#880000';
+        (cross.onmouseout = () => cross.style.color = '#ff0000')();
+        cross.style.paddingLeft = '20px';
+        cross.onclick = () => {
+            confirmBox(`Are you sure you want to delete backup "${file}"?`).then(data => {
+                if (data.response === 1) return;
+                showLoad('Deleting Backup');
+                fs.rmdirSync(`${SERVER_PATH}backups\\${file}`, { recursive: true, });
+                refreshBackups();
+                showLoad();
+            });
+        }
+
+        buttonContainer.style.float = 'right';
+
+        buttonContainer.append(check, cross);
+
+        container.append(label, buttonContainer);
+        restoreList.appendChild(container);
+    });
     showLoad();
 };
+const backup = () => {
+    if (SERVER_ONLINE) return warnBox('You cannot make backups when the server is running!');
+    let name = document.querySelector('#Backups-Name').value.replace(/ /g, '');
+    confirmBox(`Are you sure you want to make ${name === '' ? 'this backup' : 'the backup "' + name + '"'}?`).then(data => {
+        if (data.response === 1) return;
+        showLoad('Copying Data');
+        try {
+            if (name === '') {
+                let date = new Date();
+                name = `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`;
+                while (true) {
+                    if (fs.existsSync(`${SERVER_PATH}backups\\${name}`)) name += '-';
+                    else break;
+                }
+            }
+            if (!fs.existsSync(`${SERVER_PATH}backups`)) fs.mkdirSync(`${SERVER_PATH}backups`);
+            if (fs.existsSync(`${SERVER_PATH}backups\\${name}`)) {
+                errBox('A backup of that name already exists!');
+                return showLoad();
+            }
+            fs.mkdirSync(`${SERVER_PATH}backups\\${name}`);
+            for (let file of document.querySelector('#Backups-BackupList').children) {
+                if (file.children[0].checked) fs.copySync(SERVER_PATH + file.children[2].innerText, `${SERVER_PATH}backups\\${name}\\${file.children[2].innerText}`);
+            }
+            refreshBackups();
+            showLoad();
+            infoBox('Backup complete!');
+        } catch (e) {
+            errBox(`An unknown error occured during restoration.\n\n${e}\n\nIf this continues to occur, making backups using the file explorer is recommended.`);
+            showLoad();
+        }
+    });
+}
+const restore = name => {
+    showLoad('Restoring Backup');
+    try {
+        let files = fs.readdirSync(`${SERVER_PATH}\\backups\\${name}`, { withFileTypes: true }).map(dirent => dirent.name);
+        files.forEach(file => fs.copySync(`${SERVER_PATH}\\backups\\${name}\\${file}`, SERVER_PATH + file));
+        showLoad();
+        infoBox(`Backup ${name} restored!`);
+    } catch (e) {
+        errBox(`An unknown error occured during restoration.\n\n${e}\n\nIf this continues to occur, restoring backups using the file explorer is recommended.`);
+        showLoad();
+    }
+}
 // New Server Tab
 const newServer = () => {
     showTab('NewServer');
@@ -211,7 +307,6 @@ const newServer = () => {
         showTab('Servers');
     }, 10000);
     // Request & Organize Data
-    // ##########################################################################################################################################
     window.fetch("https://papermc.io/api/v1/paper").then(response => response.json()).then(data => {
         window.clearTimeout(timeout);
         data.versions.forEach(version => {

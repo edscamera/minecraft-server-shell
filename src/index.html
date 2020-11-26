@@ -61,16 +61,16 @@
             <button class='Console-Button' id='Options-Save'>Save</button>
         </div>
         <div id='Backups'>
-            <div class='Backups-Tab'>
-                <div class='Backups-Label'>Backup</div>
-                <div class='Backups-List' id='Backups-BackupList'>
-
+            <div id='Backups-Container'>
+                <div class='Backups-Tab'>
+                    <div class='Backups-Label'>Backup</div>
+                    <div class='Backups-List' id='Backups-BackupList'></div>
+                    <input id='Backups-Name' type="text" placeholder='Backup Name (Optional)'> <br />
+                    <button style='width:98%; margin: 0px;' onclick='backup()'>Backup</button>
                 </div>
-            </div>
-            <div class='Backups-Tab'>
-                <div class='Backups-Label'>Restore</div>
-                <div class='Backups-List' id='Backups-RestoreList'>
-                    none
+                <div class='Backups-Tab'>
+                    <div class='Backups-Label'>Restore</div>
+                    <div class='Backups-List' id='Backups-RestoreList'></div>
                 </div>
             </div>
         </div>

@@ -62,6 +62,10 @@ input:focus, textarea:focus, select:focus, button:focus {
 #Servers-List img {
     border-radius: 15%;
     margin-right: 15px;
+    vertical-align: middle;
+}
+#Servers-List span {
+    vertical-align: middle;
 }
 /* SERVER BUTTONS */
 #Servers-Buttons  {
@@ -96,6 +100,7 @@ input:focus, textarea:focus, select:focus, button:focus {
 .ACCEPT {
   display: none;
   float: right;
+  vertical-align: middle;
   transition: .3s ease-in-out;
 }
 .ACCEPT:hover {
@@ -133,25 +138,38 @@ button:active:enabled {
   text-align: center;
 }
 /* BACKUPS */
-#Backups {
-  width: 100%;
-  text-align: center;
-}
+#Backups-Container { width: 100%; }
+
 .Backups-Tab {
-  display: inline-block;
-  width: 45%;
-  padding: 15px;
+    width: 45%;
+    margin: none;
+    padding: 15px;
+    text-align: center;
 }
+.Backups-Tab:nth-child(1) { float: left; }
+.Backups-Tab:nth-child(2) { float: right; }
 .Backups-Label {
-  text-align: center;
-  font-size: 30px;
-  padding-bottom: 15px;
+    font-size: 30px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
 }
 .Backups-List {
   background-color: #ffffff;
   border-radius: 15px;
   padding: 15px;
   text-align: left;
+}
+
+#Backups input[type="text"]  {
+    width: 95%;
+    border-radius: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: none;
+    margin-right: none;
+    border: none;
+    padding: 10px;
 }
 /* LOADING */
 #Loading {
