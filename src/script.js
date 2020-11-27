@@ -313,6 +313,7 @@ const newServer = () => {
         showTab('Servers');
     }, 10000);
     // Request & Organize Data
+    let version_manifest = null;
     window.fetch("https://papermc.io/api/v1/paper").then(response => response.json()).then(data => {
         window.clearTimeout(timeout);
         data.versions.forEach(version => {
@@ -326,10 +327,28 @@ const newServer = () => {
                     let elm = Object.assign(document.createElement('OPTION'), { innerText: build === data.builds.latest ? `${build} (Latest)` : build });
                     document.querySelector('#NewServer-BuildSelect').appendChild(elm);
                 });
-                showLoad();
+                window.fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json").then(response => response.json()).then(dat => {
+                    version_manifest = dat;
+                    dat.versions.forEach(ver => {
+                        let elm;
+                        if (ver.id === dat.latest.release)
+                            elm = Object.assign(document.createElement('OPTION'), { innerText: ver.id + ' (Stable)', selected: 'selected' });
+                        if (ver.id === dat.latest.snapshot)
+                            elm = Object.assign(document.createElement('OPTION'), { innerText: ver.id + ' (Latest)' });
+                        if (!elm) elm = Object.assign(document.createElement('OPTION'), { innerText: ver.id });
+                        document.querySelector('#NewServer-VersionSelectB').appendChild(elm);
+
+                    });
+                    showLoad();
+                });
+
             });
         })();
     });
+    document.querySelector('#NewServer-CoreSelect').onchange = () => {
+        document.querySelector('#NewServer-MinecraftDiv').style.display = document.querySelector('#NewServer-CoreSelect').value === 'Minecraft' ? 'block' : 'none';
+        document.querySelector('#NewServer-PaperDiv').style.display = document.querySelector('#NewServer-CoreSelect').value === 'Paper' ? 'block' : 'none';
+    };
     document.querySelector('#NewServer-EULA').onchange = () => document.querySelector('#NewServer-JarDownload').disabled = !document.querySelector('#NewServer-JarDownload').disabled;
     document.querySelector('#NewServer-JarDownload').onclick = () => {
         if (!document.querySelector('#NewServer-EULA').checked) return;
@@ -349,10 +368,34 @@ const newServer = () => {
         }
         // Get Server JAR
         showLoad('Downloading JAR');
-        let version = document.querySelector('#NewServer-VersionSelect').value;
+        let version;
         let build = document.querySelector('#NewServer-BuildSelect').value.split(' ')[0];
-        let url = `http://papermc.io/api/v1/paper/${version}/${build}/download`;
-
+        let url;
+        switch (document.querySelector('#NewServer-CoreSelect').value.toLowerCase()) {
+            case 'paper':
+                version = document.querySelector('#NewServer-VersionSelect').value.split(' ')[0];
+                url = `http://papermc.io/api/v1/paper/${version}/${build}/download`;
+                (async () => {
+                    fs.writeFileSync(`${newServerPath}server.jar`, await download(url));
+                })();
+                break;
+            case 'minecraft':
+                let jso = null;
+                version = document.querySelector('#NewServer-VersionSelectB').value.split(' ')[0];
+                version_manifest.versions.forEach(ver => {
+                    if (ver.id === version) jso = ver.url;
+                });
+                window.fetch(jso).then(resp => resp.json()).then(data => {
+                    url = data.downloads.server.url;
+                    (async () => {
+                        fs.writeFileSync(`${newServerPath}server.jar`, await download(url));
+                    })();
+                });
+                break;
+            default:
+                errBox(`Unkown core "${document.querySelector('#NewServer-CoreSelect').value}"!`);
+                return;
+        }
         const defaultFiles = [
             {
                 path: `${newServerPath}eula.txt`,
@@ -369,10 +412,14 @@ const newServer = () => {
             {
                 path: `${newServerPath}minecraftservershell.json`,
                 data: JSON.stringify({
-                    server: {
+                    server: document.querySelector('#NewServer-CoreSelect').value === 'Paper' ? {
                         version: document.querySelector('#NewServer-VersionSelect').value,
-                        build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0]
-                    },
+                        build: document.querySelector('#NewServer-BuildSelect').value.split(' ')[0],
+                        core: 'paper',
+                    } : {
+                            version: document.querySelector('#NewServer-VersionSelectB').value,
+                            core: 'minecraft',
+                        },
                     memory: '2G',
                 }),
                 loadingText: 'Saving Data',
@@ -395,19 +442,17 @@ const newServer = () => {
             },
         ];
 
-        (async () => {
-            fs.writeFileSync(`${newServerPath}server.jar`, await download(url));
+        defaultFiles.forEach(task => {
+            showLoad(task.loadingText);
+            showLoad('Loading');
+            if (task.overwrite) task.overwrite();
+            else fs.writeFileSync(task.path, task.data);
+            showLoad('Loading');
+        });
 
-            defaultFiles.forEach(task => {
-                showLoad(task.loadingText);
-                if (task.overwrite) task.overwrite();
-                else fs.writeFileSync(task.path, task.data);
-            });
-
-            retrieveLocalServers();
-            infoBox('Server created!');
-            showTab('Servers');
-        })();
+        retrieveLocalServers();
+        infoBox('Server created!');
+        showTab('Servers');
     };
 };
 const serverFolder = () => exec(`start "" "${process.env.LOCALAPPDATA}\\MinecraftServerShell\\Servers"`);

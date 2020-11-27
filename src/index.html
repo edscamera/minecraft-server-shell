@@ -27,6 +27,10 @@
                 <button class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</button>
                 <button class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</button>
             </div>
+            <a style='position: absolute; left: 0px; bottom: 0px;'
+                onclick='electron.shell.openExternal("https:\/\/github.com/edwardscamera/MinecraftServerShell")'>v1.0.0</a>
+            <a style='position: absolute; right: 0px; bottom: 0px;'
+                onclick='electron.shell.openExternal("http:\/\/edwardscamera.com")'>by edwardscamera</a>
         </div>
         <div id='NewServer'>
             <label for='NewServer-ServerName'>Server Name: </label>
@@ -35,12 +39,25 @@
             <label for='NewServer-Icon'>Server Icon: </label>
             <input type='file' id='NewServer-Icon' accept="image/png">
             <br /><br />
-            <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
-            <select id='NewServer-VersionSelect'></select>
+            <label for='NewServer-CoreSelect'>Pick a Core: </label>
+            <select id='NewServer-CoreSelect'>
+                <option>Paper</option>
+                <option>Minecraft</option>
+            </select>
             <br /><br />
-            <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
-            <select id='NewServer-BuildSelect'></select>
-            <br /><br />
+            <div style='display:block;' id='NewServer-PaperDiv'>
+                <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
+                <select id='NewServer-VersionSelect'></select>
+                <br /><br />
+                <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
+                <select id='NewServer-BuildSelect'></select>
+                <br /><br />
+            </div>
+            <div style='display:none;' id='NewServer-MinecraftDiv'>
+                <label for='NewServer-VersionSelectB'>Pick a Minecraft Version: </label>
+                <select id='NewServer-VersionSelectB'></select>
+                <br /><br />
+            </div>
             <label for='NewServer-EULA'>Do you agree to the <a
                     onclick='electron.shell.openExternal("https:\/\/account.mojang.com/documents/minecraft_eula")'>Minecraft
                     EULA</a>?</label>
