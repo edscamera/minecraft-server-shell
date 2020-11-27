@@ -88,4 +88,6 @@ typings/
 # Electron-Forge
 out/
 
+# Other Stuffs
 *.rar
+legacy_versions/
