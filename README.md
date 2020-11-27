@@ -1,7 +1,7 @@
 # MinecraftServerShell
 
 Version 1.0.0 download avalible here:
-https://www.dropbox.com/s/4im4ag3gqe0fwix/minecraftservershell-win32-x64-v1.0.0.zip?dl=0
+https://github.com/edwardscamera/MinecraftServerShell/releases/download/v1.0.0/minecraftservershell-win32-x64-v1.0.0.zip
 
 Download and Unzip, run EXE file.
 
