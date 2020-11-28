@@ -1,7 +1,10 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, session } = require('electron');
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+require('electron-reload')(`${__dirname}/../`);
 
 let mainWindow = null;
 const createWindow = () => {
+    installExtension(REACT_DEVELOPER_TOOLS);
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -13,6 +16,7 @@ const createWindow = () => {
         icon: `${__dirname}/../icon.png`,
     });
     mainWindow.loadURL('http://localhost:3000');
+
 };
 
 app.on('ready', createWindow);

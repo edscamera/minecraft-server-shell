@@ -10,6 +10,6 @@ class PanelContainer extends React.Component {
     }
 }
 ReactDOM.render(
-    <PanelContainer></PanelContainer>,
+    <PanelContainer render="Servers"></PanelContainer>,
     document.getElementById('root')
 );
