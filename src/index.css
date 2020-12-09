@@ -1,0 +1,24 @@
+  
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@500&display=swap');
+body {
+    margin: 0px;
+    background-color: #000000;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+.PanelSwitcher_Container {
+    background-color: #ffffff;
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    padding-top: 15px;
+}
+.PanelSwitcher_Option {
+    padding: 15px;
+    width: 100%;
+    user-select: none;
+    transition: ease-in-out .3s;
+}
+.PanelSwitcher_Option:hover {
+    background-color:  #417dd1;
+    color: #ffffff;
+}
