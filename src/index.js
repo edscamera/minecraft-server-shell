@@ -2,6 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+class ServerContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            directory: process.env.LOCALAPPDATA,
+            servers: [],
+        };
+        
+    }
+    render() {
+        return(
+        <div className="ServerContainer_Title">
+            There are {this.state.servers.length} server{this.state.servers.length === 1 ? '' : 's'} avalible!
+        </div>
+        );
+    }
+}
 
 class PanelSwitcher extends React.Component {
     constructor(props) {
@@ -23,13 +40,18 @@ class PanelSwitcher extends React.Component {
         let options = [];
         this.state.buttons.forEach(button => {
             options.push(
-                <div className="PanelSwitcher_Option">
+                <div className="PanelSwitcher_Option" key={button.panelName}>
                     {button.display}
                 </div>
             );
         });
         return (
-            <div className="PanelSwitcher_Container">{options}</div>
+            <div className="PanelSwitcher_Container">
+                <div className="PanelSwitcher_Title">
+                    Minecraft Server Shell
+                </div>
+                <div>{options}</div>
+            </div>
         );
     }
 }
@@ -46,7 +68,7 @@ class PanelContainer extends React.Component {
             default:
             case 'Servers':
                 return (
-                    <PanelSwitcher></PanelSwitcher>
+                    <ServerContainer></ServerContainer>
                 );
             case 'Backups':
                 return (

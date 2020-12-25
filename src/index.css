@@ -1,24 +1,35 @@
-  
 @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@500&display=swap');
+:root {
+    --blue: #417dd1;
+    --white: #ffffff;
+    --black: #000000;
+}
 body {
     margin: 0px;
-    background-color: #000000;
+    background-color: var(--blue);
     font-family: 'Merriweather Sans', sans-serif;
 }
 .PanelSwitcher_Container {
-    background-color: #ffffff;
+    background-color: var(--white);
     height: 100%;
     width: 300px;
     position: fixed;
     padding-top: 15px;
 }
+.PanelSwitcher_Title {
+    padding: 15px 15px 40px 15px;
+    user-select: none;
+}
 .PanelSwitcher_Option {
     padding: 15px;
-    width: 100%;
     user-select: none;
     transition: ease-in-out .3s;
 }
 .PanelSwitcher_Option:hover {
-    background-color:  #417dd1;
-    color: #ffffff;
+    background-color:  var(--blue);
+    color: var(--white);
+}
+.PanelSwitcher_Option:active {
+    transition: ease-in-out .1s;
+    color: var(--blue);
 }
