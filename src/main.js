@@ -1,37 +1,28 @@
-const { app, BrowserWindow, session, ipcMain } = require('electron');
-const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
-require('electron-reload')(`${__dirname}/../`);
+const { app, BrowserWindow } = require('electron');
+const isDev = require('electron-is-dev');
+const path = require('path');
+let mainWindow;
 
-const fs = require('fs');
-
-let mainWindow = null;
 const createWindow = () => {
-    installExtension(REACT_DEVELOPER_TOOLS);
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        autoHideMenuBar: true,
+        show: false,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
         },
-        icon: `${__dirname}/../icon.png`,
-        title: 'Minecraft Server Shell',
+        autoHideMenuBar: true,
     });
-    mainWindow.loadURL('http://localhost:3000');
+    const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
 
-};
+    mainWindow.loadURL(startURL);
+    mainWindow.once('ready-to-show', () => mainWindow.show());
+}
 
 app.on('ready', createWindow);
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
-})
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
-})
+});

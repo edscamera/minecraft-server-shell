@@ -1,14 +1,17 @@
 {
-    "name": "minecraftservershell",
+    "name": "minecraft-server-shell",
     "version": "2.0.0",
     "private": true,
+    "homepage": "./",
+    "main": "./src/main.js",
     "dependencies": {
-        "@testing-library/jest-dom": "^5.11.6",
-        "@testing-library/react": "^11.2.2",
-        "@testing-library/user-event": "^12.2.2",
+        "@testing-library/jest-dom": "^5.11.4",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.1.10",
         "concurrently": "^5.3.0",
-        "electron": "^11.0.3",
-        "electron-devtools-installer": "^3.1.1",
+        "electron": "^11.1.1",
+        "electron-builder": "^22.9.1",
+        "electron-is-dev": "^1.2.0",
         "electron-reload": "^1.5.0",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
@@ -16,13 +19,13 @@
         "wait-on": "^5.2.0",
         "web-vitals": "^0.2.4"
     },
-    "main": "src/main.js",
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "electron-react": "concurrently \"SET BROWSER=none && npm start\" \"wait-on http://localhost:3000 && electron .\""
+        "start": "rescripts start",
+        "build": "rescripts build",
+        "test": "rescripts test",
+        "eject": "rescripts eject",
+        "ebuild": "npm run build && node_modules/.bin/build",
+        "dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\""
     },
     "eslintConfig": {
         "extends": [
@@ -41,5 +44,9 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@rescripts/cli": "0.0.15",
+        "@rescripts/rescript-env": "0.0.12"
     }
 }
