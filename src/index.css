@@ -28,11 +28,14 @@ body {
     margin-right: auto;
     border-collapse: collapse;
     width: 50%;
+    max-width: 750px;
     margin-bottom: 15px;
 }
 .ServerSelect_ListIndex {
     background-color: var(--white);
+    
     width: 100%;
+    
     padding: 15px;
     margin-bottom: 15px;
 }
@@ -46,6 +49,14 @@ body {
 #ServerSelect_ListIndex_Open:hover { color: var(--create_hover); }
 #ServerSelect_ListIndex_Delete { color: var(--delete); }
 #ServerSelect_ListIndex_Delete:hover { color: var(--delete_hover); }
+#ServerSelect_ButtonParent {
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+
+    left: 50%;
+    transform: translateX(-50%);
+}
 .ServerSelect_Button {
     display: inline-block;
     width: 120px;
@@ -60,3 +71,24 @@ body {
 #ServerSelect_Button_OpenFolder:hover { background-color: var(--folder_hover); }
 #ServerSelect_Button_CreateServer { background-color: var(--create); }
 #ServerSelect_Button_CreateServer:hover { background-color: var(--create_hover); }
+
+#CreateServer_TableParent {
+    background-color: var(--white);
+    border-radius: 15px;
+
+    max-width: 500px;
+    width: 50%;    
+    text-align: center;
+    margin: auto;
+
+    padding: 15px;
+}
+#CreateServer_Table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    
+    text-align: center;
+}
+#CreateServer_Table tr td:first-child { float: left; }
+#CreateServer_Table tr td:last-child { float: right; }

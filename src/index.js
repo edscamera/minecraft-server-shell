@@ -11,6 +11,9 @@ const dir = {
     root: path.join(os.homedir(), "\\MinecraftServerShell\\"),
     servers: path.join(os.homedir(), "\\MinecraftServerShell\\servers"),
 };
+const global = {
+    switchPanel: () => { },
+}
 
 class MinecraftServerShell extends React.Component {
     constructor(props) {
@@ -20,28 +23,60 @@ class MinecraftServerShell extends React.Component {
         if (!fs.existsSync(dir.servers)) fs.mkdirSync(dir.servers);
     }
     render() {
-        return (<PanelContainer panel="Servers"></PanelContainer>);
+        return (<PanelContainer panel="ServerList"></PanelContainer>);
     }
 }
 
 class PanelContainer extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            panel: props.panel,
-        };
+        this.state = { panel: this.props.panel, };
+        global.switchPanel = this.switchPanel;
     }
+    switchPanel = (panel) => { this.setState({ panel: panel, }) }
     render() {
         let screen = null;
         switch (this.state.panel) {
-            case "Servers":
+            case "ServerList":
                 screen = <ServerSelect></ServerSelect>;
+                break;
+            case "CreateServer":
+                screen = <CreateServer></CreateServer>;
                 break;
             default:
                 screen = <h1>Invalid Panel State</h1>;
                 break;
         }
         return (screen);
+    }
+}
+
+class CreateServer extends React.Component {
+    render() {
+        return (
+            // TODO: Vanilla, Paper, Tuinity JAR support
+            <div>
+                <div className="ServerSelect_Header">
+                    Create A Server
+                </div>
+                <div id="CreateServer_TableParent">
+                    <table id="CreateServer_Table">
+                        <tbody>
+                            <tr>
+                                <td>Server JAR/Core</td>
+                                <td>
+                                    <select>
+                                        <option>Vanilla</option>
+                                        <option>Paper</option>
+                                        <option>Tuinity</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
     }
 }
 
@@ -67,13 +102,14 @@ class ServerSelect extends React.Component {
                 <table className="ServerSelect_List">
                     <tbody>{servers}</tbody>
                 </table>
-                <div style={{ textAlign: "center", }}>
+                <div id="ServerSelect_ButtonParent">
                     <div className="ServerSelect_Button"
                         id="ServerSelect_Button_OpenFolder"
                         onClick={this.openFolder}
                     >Open Folder</div>
                     <div className="ServerSelect_Button"
                         id="ServerSelect_Button_CreateServer"
+                        onClick={this.createServer}
                     >Create Server</div>
                 </div>
             </div>
@@ -81,6 +117,9 @@ class ServerSelect extends React.Component {
     }
     openFolder() {
         require('child_process').exec(`start "" "${dir.servers}"`);
+    }
+    createServer() {
+        global.switchPanel("CreateServer");
     }
 }
 
@@ -108,6 +147,7 @@ class ServerSelectListIndex extends React.Component {
         );
     }
     deleteServer() {
+        console.log(this);
         dialog.showMessageBox({
             buttons: ["Yes", "No"],
             message: `Are you sure you want to delete your server "${this.props.name}"? This cannot be reversed!`,
