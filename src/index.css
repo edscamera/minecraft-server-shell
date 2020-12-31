@@ -10,6 +10,7 @@
     --create_hover: #00AA00;
     --delete: #ff0000;
     --delete_hover: #aa0000;
+    --disabled: #aaaaaa;
 }
 #root {
     padding: 10px;
@@ -17,6 +18,57 @@
 }
 body {
     background-color: var(--blue);
+}
+.LeftRight {
+    display: flex;
+    justify-content: space-between;
+}
+.ExternalLink {
+    color: blue;
+    user-select: none;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+.ExternalLink:hover { color: var(--blue); }
+
+#Loading_Background {
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    transition: .2s ease-out;
+    position: fixed;
+
+    z-index: 2;
+}
+.Loading_Background_0 {
+    opacity: 0!important;
+    z-index: -2!important;
+}
+#Loading_Container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    padding: 50px;
+    border-radius: 15px;
+    opacity: 1;
+}
+#Loading_Loader {
+    border: 10px solid var(--white);
+    border-radius: 50%;
+    border-top: 10px solid var(--blue);
+    width: 120px;
+    height: 120px;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto;
+}
+#Loading_Text { text-align: center; margin-top: 15px }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .ServerSelect_Header {
@@ -73,22 +125,40 @@ body {
 #ServerSelect_Button_CreateServer:hover { background-color: var(--create_hover); }
 
 #CreateServer_TableParent {
-    background-color: var(--white);
-    border-radius: 15px;
-
-    max-width: 500px;
-    width: 50%;    
-    text-align: center;
     margin: auto;
-
+    width: 50%;
+    max-width: 600px;
+    background-color: #FFFFFF;
     padding: 15px;
+    border-radius: 15px;
 }
-#CreateServer_Table {
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    
-    text-align: center;
+#CreateServer_CreateButton {
+    background-color: var(--create);
+    width: 150px;
+    padding: 15px;
+    margin: 5px;
+    user-select: none;
+    border-radius: 15px;
+    transition: .2s ease-out;
+    cursor: pointer;
+    border: none;
+    font-family: 'Poppins', sans-serif;
 }
-#CreateServer_Table tr td:first-child { float: left; }
-#CreateServer_Table tr td:last-child { float: right; }
+#CreateServer_CreateButton:disabled {
+    background-color: var(--disabled);
+    cursor: auto;
+}
+#CreateServer_CreateButton:hover { background-color: var(--create_hover); }
+#CreateServer_GoBack {
+    background-color: var(--delete);
+    width: 150px;
+    padding: 15px;
+    margin: 5px;
+    user-select: none;
+    border-radius: 15px;
+    transition: .2s ease-out;
+    cursor: pointer;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+}
+#CreateServer_GoBack:hover { background-color: var(--delete_hover); }
