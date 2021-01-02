@@ -48,6 +48,7 @@
     },
     "devDependencies": {
         "@rescripts/cli": "0.0.15",
-        "@rescripts/rescript-env": "0.0.12"
+        "@rescripts/rescript-env": "0.0.12",
+        "electron-devtools-installer": "^3.1.1"
     }
 }
