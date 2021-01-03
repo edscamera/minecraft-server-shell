@@ -17,6 +17,7 @@
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "react-scripts": "4.0.1",
+        "resize-img": "^2.0.0",
         "wait-on": "^5.2.0",
         "web-vitals": "^0.2.4"
     },

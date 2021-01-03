@@ -7,6 +7,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const download = require("download");
 const { dialog, shell } = require("electron").remote;
+const resizeImg = require('resize-img');
 
 class CreateServer extends React.Component {
     constructor(props) {
@@ -66,6 +67,11 @@ class CreateServer extends React.Component {
                         {ver.id + suffix}
                     </option>);
                 }),
+                url: (() => {
+                    let urls = {};
+                    data.versions.forEach(ver => urls[ver.id] = ver.url);
+                    return urls;
+                })(),
             };
         }).then(() => {
             window.fetch("https://papermc.io/api/v2/projects/paper/").then(r => r.json()).then(data2 => {
@@ -151,7 +157,7 @@ class CreateServer extends React.Component {
                     </ul>
                     <div className="LeftRight">
                         <span>Upload Server Icon</span>
-                        <input type="file" onChange={(a) => this.checkUpload(a, ".png")}></input>
+                        <input type="file" onChange={(a) => this.setimg(a)}></input>
                     </div>
                     <ul>
                         <li>The image provided will be used as the server icon in both Minecraft Server Shell and Minecraft. The server icon is visible in the Multiplayer menu in Minecraft.</li>
@@ -211,13 +217,40 @@ class CreateServer extends React.Component {
 
             let downloadComplete = () => {
                 Loading.show("Writing Additional Files");
+                fs.writeFileSync(path.join(this.props.dir.server, "eula.txt"), "eula=true");
+                fs.writeFileSync(path.join(this.props.dir.server, "start.bat"), "java -Xms512M -Xmx2G -jar server.jar nogui");
+                (async () => {
+                    if (this.state.img) {
+                        fs.copyFileSync(this.state.img, path.join(this.props.dir.server, "server-icon-0.png"));
 
+                        let pathi = fs.readFileSync(path.join(this.props.dir.server, "server-icon-0.png"));
+                        console.log(pathi);
+
+                        const image = await resizeImg(pathi, {
+                            width: 64,
+                            height: 64,
+                        });
+
+                        fs.writeFileSync(path.join(this.props.dir.server, "server-icon.png"), image);
+                    }
+                    Loading.hide();
+                    this.props.switchPanel("ServerList");
+                })();
             };
 
             // Download JAR/Core
             Loading.show("Downloading JAR/Core");
             switch (this.state.jar) {
                 case "Vanilla":
+                    let fet = this.state.apidat.vanilla.version;
+                    if (["(Latest)", "(Stable)"].includes(this.state.apidat.vanilla.version.split(" ")[1])) fet = this.state.apidat.vanilla.version.split(" ")[0];
+                    console.log(fet);
+                    window.fetch(this.state.apidat.vanilla.url[fet]).then(r => r.json()).then(data => {
+                        (async () => {
+                            fs.writeFileSync(path.join(this.props.dir.server, "server.jar"), await download(data.downloads.server.url));
+                            downloadComplete();
+                        })();
+                    });
 
                     break;
                 case "Paper":
@@ -238,7 +271,7 @@ class CreateServer extends React.Component {
                     downloadComplete();
                     break;
                 default:
-                    dialog.showErrorBox("Minecraft Server Shell", "Unkown JAR option was set.");
+                    dialog.showErrorBox("Minecraft Server Shell", "Unknown JAR option was set.");
                     fs.rmthis.props.dirSync(this.props.dir.server, { recursive: true });
                     this.props.dir.server = null;
                     Loading.hide();
@@ -254,6 +287,10 @@ class CreateServer extends React.Component {
                 confirmed();
             }
         });
+    }
+    setimg = (a) => {
+        if (!this.checkUpload(a, ".png")) return;
+        this.setState({ img: a.target.files[0].path, });
     }
     setjar = (a) => {
         if (!this.checkUpload(a, ".jar")) return;
