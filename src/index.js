@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import './index.css';
 
-import Loading from "./components/Loading";
-import ServerSelect from "./screens/ServerSelect";
-import CreateServer from "./screens/CreateServer";
+import Loading from "./components/Loading.js";
+import ServerSelect from "./screens/ServerSelect.js";
+import CreateServer from "./screens/CreateServer.js";
 
 const fs = require("fs-extra");
 const os = require("os");
@@ -15,7 +15,6 @@ class MinecraftServerShell extends React.Component {
         root: path.join(os.homedir(), "\\MinecraftServerShell\\"),
         servers: path.join(os.homedir(), "\\MinecraftServerShell\\servers"),
         server: null,
-        yo: "YOOOO1",
     };
 
     constructor(props) {
@@ -47,10 +46,10 @@ class PanelContainer extends React.Component {
         let screen = null;
         switch (this.state.panel) {
             case "ServerList":
-                screen = <ServerSelect switchPanel={PanelContainer.switchPanel}></ServerSelect>;
+                screen = <ServerSelect dir={MinecraftServerShell.dir} switchPanel={PanelContainer.switchPanel}></ServerSelect>;
                 break;
             case "CreateServer":
-                screen = <CreateServer switchPanel={PanelContainer.switchPanel}></CreateServer>;
+                screen = <CreateServer dir={MinecraftServerShell.dir} switchPanel={PanelContainer.switchPanel}></CreateServer>;
                 break;
             default:
                 screen = <h1>Invalid Panel State</h1>;
@@ -60,7 +59,7 @@ class PanelContainer extends React.Component {
     }
 }
 
-ReactDOM.render(
+render(
     <MinecraftServerShell></MinecraftServerShell>,
     document.getElementById('root')
 );

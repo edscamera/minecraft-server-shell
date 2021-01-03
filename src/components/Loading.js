@@ -1,5 +1,5 @@
 import React from 'react';
-//import './index.css';
+import "./Loading.css";
 
 class Loading extends React.Component {
     static instance = null;

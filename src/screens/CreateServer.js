@@ -1,8 +1,7 @@
 import React from 'react';
-//import './index.css';
 
-import Loading from "../components/Loading";
-import MinecraftServerShell from "../index.js";
+import Loading from "../components/Loading.js";
+import "./CreateServer.css";
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -195,20 +194,20 @@ class CreateServer extends React.Component {
                 }
             };
             // Check for existing server
-            if (fs.existsSync(path.join(MinecraftServerShell.dir.servers, this.state.name))) {
+            if (fs.existsSync(path.join(this.props.dir.servers, this.state.name))) {
                 dialog.showErrorBox("Minecraft Server Shell", `A server already exists by the name "${this.state.name}".`);
                 Loading.hide();
                 return;
             }
             // Attempt to make directory
             try {
-                fs.mkdirSync(path.join(MinecraftServerShell.dir.servers, this.state.name));
+                fs.mkdirSync(path.join(this.props.dir.servers, this.state.name));
             } catch (e) {
                 dialog.showErrorBox("Minecraft Server Shell", `An unexpected error occurred while creating the folder.\n\n${e}`);
                 Loading.hide();
                 return;
             }
-            MinecraftServerShell.dir.server = path.join(MinecraftServerShell.dir.servers, this.state.name);
+            this.props.dir.server = path.join(this.props.dir.servers, this.state.name);
 
             let downloadComplete = () => {
                 Loading.show("Writing Additional Files");
@@ -229,19 +228,19 @@ class CreateServer extends React.Component {
                     url += "/downloads/paper-"
                     url += `${this.state.apidat.paper.version}-${this.state.apidat.paper.build}.jar`;
                     (async () => {
-                        fs.writeFileSync(path.join(MinecraftServerShell.dir.server, "server.jar"), await download(url));
+                        fs.writeFileSync(path.join(this.props.dir.server, "server.jar"), await download(url));
                         downloadComplete();
                     })();
                     break;
                 case "Custom":
                     Loading.show("Copying JAR/Core");
-                    fs.copyFileSync(this.state.apidat.custom, path.join(MinecraftServerShell.dir.server, "server.jar"));
+                    fs.copyFileSync(this.state.apidat.custom, path.join(this.props.dir.server, "server.jar"));
                     downloadComplete();
                     break;
                 default:
                     dialog.showErrorBox("Minecraft Server Shell", "Unkown JAR option was set.");
-                    fs.rmMinecraftServerShell.dirSync(MinecraftServerShell.dir.server, { recursive: true });
-                    MinecraftServerShell.dir.server = null;
+                    fs.rmthis.props.dirSync(this.props.dir.server, { recursive: true });
+                    this.props.dir.server = null;
                     Loading.hide();
                     break;
             }

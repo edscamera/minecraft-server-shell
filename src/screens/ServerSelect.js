@@ -1,8 +1,7 @@
 import React from 'react';
-//import './index.css';
 
-import Loading from "../components/Loading";
-import MinecraftServerShell from "../index";
+import Loading from "../components/Loading.js";
+import "./ServerSelect.css";
 
 const fs = require("fs");
 const path = require("path");
@@ -11,15 +10,15 @@ const { dialog } = require("electron").remote;
 class ServerSelect extends React.Component {
     constructor(props) {
         super(props);
-        fs.watch(MinecraftServerShell.dir.servers, () => this.forceUpdate());
+        fs.watch(this.props.dir.servers, () => this.forceUpdate());
     }
     render = () => {
-        let servers = fs.readdirSync(MinecraftServerShell.dir.servers, { withFileTypes: true });
+        let servers = fs.readdirSync(this.props.dir.servers, { withFileTypes: true });
         servers = servers.filter(dir => dir.isDirectory());
         servers = servers.map(dir => <ServerSelectListIndex
             name={dir.name}
             key={dir.name}
-            dir={MinecraftServerShell.dir.servers}
+            dir={this.props.dir.servers}
             rerender={() => this.forceUpdate()}
         />);
 
@@ -45,7 +44,7 @@ class ServerSelect extends React.Component {
         );
     }
     openFolder = () => {
-        require('child_process').exec(`start "" "${MinecraftServerShell.dir.servers}"`);
+        require('child_process').exec(`start "" "${this.props.dir.servers}"`);
     }
     createServer = () => {
         this.props.switchPanel("CreateServer");
@@ -57,7 +56,7 @@ class ServerSelectListIndex extends React.Component {
         super(props);
         this.state = {
             name: this.props.name,
-            directory: path.join(MinecraftServerShell.dir, this.props.name),
+            directory: path.join(this.props.dir, this.props.name),
         };
 
         this.deleteServer = this.deleteServer.bind(this);
