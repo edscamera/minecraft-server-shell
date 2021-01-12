@@ -161,6 +161,7 @@ class CreateServer extends React.Component {
                     </div>
                     <ul>
                         <li>The image provided will be used as the server icon in both Minecraft Server Shell and Minecraft. The server icon is visible in the Multiplayer menu in Minecraft.</li>
+                        <li>The image should be of a PNG file. JPG, JPEG, and BMP files will be converted automatically.</li>
                         <li>The image provided must be 64 pixels wide and 64 pixels long. It will automatically be resized if it is not.</li>
                         <li>This image can be changed after server creation.</li>
                     </ul>
@@ -224,11 +225,13 @@ class CreateServer extends React.Component {
                         fs.copyFileSync(this.state.img, path.join(this.props.dir.server, "server-icon-0.png"));
 
                         let pathi = fs.readFileSync(path.join(this.props.dir.server, "server-icon-0.png"));
+                        console.log(path.join(this.props.dir.server, "server-icon-0.png"))
                         console.log(pathi);
 
-                        const image = await resizeImg(pathi, {
+                        const image = await resizeImg(Buffer(pathi), {
                             width: 64,
                             height: 64,
+                            format: "png",
                         });
 
                         fs.writeFileSync(path.join(this.props.dir.server, "server-icon.png"), image);
@@ -289,11 +292,11 @@ class CreateServer extends React.Component {
         });
     }
     setimg = (a) => {
-        if (!this.checkUpload(a, ".png")) return;
+        if (!this.checkUpload(a, [".png", ".jpg", ".bmp", ".jpeg"])) return;
         this.setState({ img: a.target.files[0].path, });
     }
     setjar = (a) => {
-        if (!this.checkUpload(a, ".jar")) return;
+        if (!this.checkUpload(a, [".jar"])) return;
         let mutate = this.state;
         mutate.apidat.custom = a.target.files[0].path;
         this.setState({ apidat: mutate.apidat, });
@@ -319,12 +322,12 @@ class CreateServer extends React.Component {
         });
     }
     checkUpload = (obj, ext) => {
-        if (!obj.target.files[0].name.toString().endsWith(ext)) {
-            dialog.showErrorBox("Minecraft Server Shell", `File must be a ${ext} file!`);
-            obj.target.value = "";
-            return false;
-        }
-        return true;
+        const format = obj.target.files[0].name.split(".").pop();
+        for (let i = 0; i < ext.length; i++) { if (ext[i].endsWith(format)) return true; }
+
+        dialog.showErrorBox("Minecraft Server Shell", `File must be a ${ext.length === 1 ? ext[0] : ext.toString().replace(/,/g, " or ")} file!`);
+        obj.target.value = "";
+        return false;
     }
 }
 
