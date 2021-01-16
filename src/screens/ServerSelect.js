@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Loading from "../components/Loading.js";
+import MinecraftServerShell from '../index.js';
 import "./ServerSelect.css";
 
 const fs = require("fs");
@@ -20,6 +21,7 @@ class ServerSelect extends React.Component {
             key={dir.name}
             dir={this.props.dir.servers}
             rerender={() => this.forceUpdate()}
+            switchPanel={this.props.switchPanel}
         />);
 
         return (
@@ -65,7 +67,7 @@ class ServerSelectListIndex extends React.Component {
         return (
             <tr className="ServerSelect_ListIndex">
                 <td>{this.state.name}</td>
-                <td style={{ width: "1%" }} className="ServerSelect_ListIndex_Button" id="ServerSelect_ListIndex_Open">
+                <td style={{ width: "1%" }} className="ServerSelect_ListIndex_Button" onClick={this.selectServer} id="ServerSelect_ListIndex_Open">
                     Open
                 </td>
                 <td style={{ width: "1%" }} className="ServerSelect_ListIndex_Button" onClick={this.deleteServer} id="ServerSelect_ListIndex_Delete">
@@ -73,6 +75,10 @@ class ServerSelectListIndex extends React.Component {
                 </td>
             </tr>
         );
+    }
+    selectServer = () => {
+        MinecraftServerShell.dir.server = this.state.directory;
+        this.props.switchPanel("Server");
     }
     deleteServer = () => {
         dialog.showMessageBox({

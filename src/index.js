@@ -5,6 +5,7 @@ import './index.css';
 import Loading from "./components/Loading.js";
 import ServerSelect from "./screens/ServerSelect.js";
 import CreateServer from "./screens/CreateServer.js";
+import Navbar from "./components/Navbar.js";
 
 const fs = require("fs-extra");
 const os = require("os");
@@ -50,6 +51,9 @@ class PanelContainer extends React.Component {
                 break;
             case "CreateServer":
                 screen = <CreateServer dir={MinecraftServerShell.dir} switchPanel={PanelContainer.switchPanel}></CreateServer>;
+                break;
+            case "Server":
+                screen = <Navbar></Navbar>;
                 break;
             default:
                 screen = <h1>Invalid Panel State</h1>;
