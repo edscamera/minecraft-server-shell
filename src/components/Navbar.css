@@ -1,5 +1,27 @@
+:root {
+    --blue: #417DD1;
+    --white: #FFFFFF;
+    --black: #000000;
+}
+
 .Navbar_Container {
     height: 100%;
     position: fixed;
-    width: 150px;
+    width: 250px;
+    background-color: var(--white);
+    left: 0px;
+    top: 0px;
+}
+.Navbar_Item, .Navbar_Item_Selected {
+    padding: 15px 0px 15px 15px;
+    user-select: none;
+    transition: .2s ease-out;
+}
+.Navbar_Item:hover {
+    background-color: var(--blue);
+    color: var(--black);
+}
+.Navbar_Item_Selected {
+    background-color: var(--blue);
+    color: var(--white);
 }
