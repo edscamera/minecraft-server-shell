@@ -1,71 +1,42 @@
-import React from 'react';
-import { render } from 'react-dom';
-import './index.css';
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 
-import Loading from "./components/Loading.js";
-import ServerSelect from "./screens/ServerSelect.js";
-import CreateServer from "./screens/CreateServer.js";
-import Navbar from "./components/Navbar.js";
-
-const fs = require("fs-extra");
-const os = require("os");
-const path = require("path");
-
-class MinecraftServerShell extends React.Component {
-    static dir = {
-        root: path.join(os.homedir(), "\\MinecraftServerShell\\"),
-        servers: path.join(os.homedir(), "\\MinecraftServerShell\\servers"),
-        server: null,
-    };
-
-    constructor(props) {
-        super(props);
-        if (!fs.existsSync(MinecraftServerShell.dir.root)) fs.dirSync(MinecraftServerShell.dir.root);
-        if (!fs.existsSync(MinecraftServerShell.dir.servers)) fs.mkdirSync(MinecraftServerShell.dir.servers);
-    }
-
-    render = () => <div>
-        <PanelContainer panel="ServerList"></PanelContainer>
-        <Loading></Loading>
-    </div>
-
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+    app.quit();
 }
 
-class PanelContainer extends React.Component {
-    static instance = null;
-    constructor(props) {
-        super(props);
-        PanelContainer.instance = this;
-        this.state = { panel: this.props.panel, };
-    }
+const createWindow = () => {
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+    });
 
-    static switchPanel = (panel) => { PanelContainer.instance.localSwitchPanel(panel); }
+    // and load the index.html of the app.
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-    localSwitchPanel = (panel) => this.setState({ panel: panel, });
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+};
 
-    render = () => {
-        let screen = null;
-        switch (this.state.panel) {
-            case "ServerList":
-                screen = <ServerSelect dir={MinecraftServerShell.dir} switchPanel={PanelContainer.switchPanel}></ServerSelect>;
-                break;
-            case "CreateServer":
-                screen = <CreateServer dir={MinecraftServerShell.dir} switchPanel={PanelContainer.switchPanel}></CreateServer>;
-                break;
-            case "Server":
-                screen = <Navbar></Navbar>;
-                break;
-            default:
-                screen = <h1>Invalid Panel State</h1>;
-                break;
-        }
-        return (screen);
-    }
-}
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow);
 
-render(
-    <MinecraftServerShell></MinecraftServerShell>,
-    document.getElementById('root')
-);
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+});
 
-export default MinecraftServerShell;
+app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and import them here.
