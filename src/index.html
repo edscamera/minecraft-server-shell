@@ -3,13 +3,67 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>MinecraftServerShell</title>
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div id="Panels">
+        <div id="Panel_ServerSelect">
+            <div id="ServerSelect_Label">Locating Servers</div>
+            <div id="ServerSelect_List"></div>
+            <div style="text-align: center;">
+                <div onclick="showPanel('AddServer')" class="ServerSelect_Button">Add Server</div>
+                <div onclick="openExternal(DIR.SERVERS)" class="ServerSelect_Button">Open Server Folder</div>
+            </div>
+        </div>
+        <div id="Panel_AddServer">
+            <div id="ServerSelect_Label">Create a Server</div>
+            <div id="AddServer_Container">
+                <div class="LeftRight">
+                    <span>Server Name</span>
+                    <input type="text">
+                </div>
+                <ul>
+                    <li>Your server name will not be represented in-game.</li>
+                    <li>Your server name will be the name of the folder your server is in and a name only used by
+                        Minecraft Server Shell.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Server JAR</span>
+                    <select onchange="switchDesc()" id="AddServer_JAR">
+                        <option key="Paper">Paper</option>
+                        <option key="Vanilla">Vanilla</option>
+                        <option key="Custom">Custom</option>
+                    </select>
+                </div>
+                <ul>
+                    <li>The server JAR is the core of your server.</li>
+                    <div id="AddServer_VanillaDesc" style="display: none;">
+                        <li><span class="ExternalLink" onclick="openExternal('https:/\/minecraft.net')">Vanilla
+                                Minecraft</span> is the base version of Minecraft,
+                            developed by Mojang. If you want the true, original
+                            Minecraft expierience, this is the choice for you.</li>
+                        <li>A new Server JAR releases at the same time as new versions of Minecraft.</li>
+                        <li>Option to use snapshots which include in development versions of the game.</li>
+                    </div>
+                    <div id="AddServer_PaperDesc">
+                        <li><span class="ExternalLink" onclick="openExternal('https:/\/papermc.io')">Paper</span> gives
+                            you the base expierience of Vanilla Minecraft, with various bug fixes and numerous
+                            improvements and optimizations.</li>
+                        <li>Optional plugin support which adds community-made extra fun to your game.</li>
+                        <li>Optimized and improved, faster Minecraft server.</li>
+                        <li>Little slower to update than vanilla Minecraft servers.</li>
+                    </div>
+                    <div id="AddServer_CustomDesc" style="display: none;">
+                        <li>Use a custom JAR file as a core.</li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="com.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>
