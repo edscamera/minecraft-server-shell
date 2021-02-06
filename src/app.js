@@ -1,6 +1,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const dialog = require("electron").remote.dialog;
 
 const DIR = {
     HOME: path.join(os.homedir(), "./MinecraftServerShell/"),
@@ -42,6 +43,15 @@ const updateServerList = (dir) => {
 fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
 
+const createServer = () => {
+    if (dialog.showMessageBoxSync(null, {
+        type: "question",
+        title: "Minecraft Server Shell",
+        buttons: ["Yes", "Cancel"],
+        message: `Do you really want to create the server "${document.querySelector("#AddServer_Name").value}" with these settings? The settings can be changed afterwards.`,
+    }) === 1) return;
+};
+
 const showPanel = (panel) => {
     Array.from(document.querySelector("#Panels").children).forEach(pan => {
         pan.style.display = pan.id === `Panel_${panel}` ? "block" : "none";
@@ -52,7 +62,9 @@ showPanel("ServerSelect");
 const openExternal = (url) => require("electron").shell.openExternal(url);
 const switchDesc = () => {
     let dropval = document.querySelector("#AddServer_JAR").value;
-    document.querySelector("#AddServer_PaperDesc").style.display = dropval === "Paper" ? "block" : "none";
-    document.querySelector("#AddServer_VanillaDesc").style.display = dropval === "Vanilla" ? "block" : "none";
-    document.querySelector("#AddServer_CustomDesc").style.display = dropval === "Custom" ? "block" : "none";
+    Array.from(document.getElementsByClassName("AddServer_PaperDesc")).forEach(c => c.style.display = (dropval === "Paper" ? "block" : "none"));
+    Array.from(document.getElementsByClassName("AddServer_VanillaDesc")).forEach(c => c.style.display = (dropval === "Vanilla" ? "block" : "none"));
+    Array.from(document.getElementsByClassName("AddServer_CustomDesc")).forEach(c => c.style.display = (dropval === "Custom" ? "block" : "none"));
 };
+switchDesc();
+const disableBtn = () => document.querySelector("#AddServer_CreateButton").disabled = !document.querySelector("#AddServer_EULA").checked;

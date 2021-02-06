@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 require('electron-reload')(__dirname);
 const path = require('path');
 
@@ -13,14 +13,26 @@ const createWindow = () => {
         width: 800,
         height: 600,
         autoHideMenuBar: true,
-        webPreferences: { nodeIntegration: true, },
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true,
+        },
     });
 
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    mainWindow.on("close", e => {
+        e.preventDefault();
+        dialog.showMessageBox(null, {
+            type: "question",
+            title: "Minecraft Server Shell",
+            buttons: ["Yes", "Cancel"],
+            message: "Do you really want to exit? Running servers may be corrupted during a forced shut down.",
+        }).then(response => {
+            if (response.response === 0) mainWindow.destroy();
+        });
+    });
 };
 
 // This method will be called when Electron has finished
@@ -32,7 +44,7 @@ app.on('ready', createWindow);
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== "darwin") app.quit();
 });
 
 app.on('activate', () => {
