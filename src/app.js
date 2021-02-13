@@ -2,6 +2,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const dialog = require("electron").remote.dialog;
+const download = require("download");
 const resizeImg = require("resize-img");
 
 const DIR = {
@@ -45,6 +46,11 @@ fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
 
 const createServer = () => {
+    const reterr = () => {
+        setLoad(false);
+        DIR.SERVER = null;
+        showPanel("ServerSelect");
+    };
     const serverName = document.querySelector("#AddServer_Name").value;
 
     if (/\/|\\|:|\*|\?|<|>|\|/g.test(serverName)) {
@@ -71,9 +77,12 @@ const createServer = () => {
         message: `Do you really want to create the server "${serverName}" with these settings? The settings can be changed afterwards.`,
     }) === 1) return;
 
+    setLoad(true, "Creating Your Server");
+
     try {
         fs.mkdirSync(path.join(DIR.SERVERS, serverName));
     } catch (e) {
+        reterr();
         return reportErr("create the server folder", e);
     }
     DIR.SERVER = path.join(DIR.SERVERS, serverName);
@@ -81,14 +90,22 @@ const createServer = () => {
     try {
         fs.writeFileSync(path.join(DIR.SERVER, "./eula.txt"), "eula=true");
     } catch (e) {
-        DIR.SERVER = null;
+        reterr();
         return reportErr("accepting the EULA", e);
     }
     try {
         fs.writeFileSync(path.join(DIR.SERVER, "./start.bat"), "java -Xms512M -Xmx2G -jar server.jar nogui");
     } catch (e) {
-        DIR.SERVER = null;
+        reterr();
         return reportErr("creating the start script", e);
+    }
+    if (document.querySelector("#AddServer_JAR").value === "Custom") {
+        try {
+            fs.copyFile(document.querySelector("#AddServer_CustomJAR").files[0].path, path.join(DIR.SERVER, "./server.jar"));
+        } catch (e) {
+            reterr();
+            return reportErr("copying the custom JAR", e);
+        }
     }
     try {
         (async () => {
@@ -103,14 +120,28 @@ const createServer = () => {
                     format: "png",
                 });
 
-                fs.writeFileSync(path.join(DIR.SERVER, "server-icon.png"), img2)
+                fs.writeFileSync(path.join(DIR.SERVER, "server-icon.png"), img2);
             }
         })();
     } catch (e) {
-        DIR.SERVER = null;
+        reterr();
         return reportErr("resizing the server image", e);
     }
-    showPanel("ServerSelect");
+    (async () => {
+        try {
+            if (document.querySelector("#AddServer_JAR").value === "Paper") {
+                const version = document.querySelector("#AddServer_PaperVerDrop").value.split(" ")[0];
+                const build = document.querySelector("#AddServer_PaperBuiDrop").value.split(" ")[0];
+                const link = `https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/paper-${version}-${build}.jar`;
+                fs.writeFileSync(path.join(DIR.SERVER, "./server.jar"), await download(link));
+
+                reterr();
+            }
+        } catch (e) {
+            reterr();
+            return reportErr("downloading the JAR", e);
+        }
+    })();
 };
 
 const showPanel = (panel) => {
@@ -169,3 +200,12 @@ document.querySelector("#AddServer_PaperVerDrop").addEventListener("change", () 
         });
     });
 });
+window.addEventListener("load", () => {
+    setLoad(false);
+    document.querySelector("#Panels").style.display = "block";
+});
+const setLoad = (value, text) => {
+    if (text) document.querySelector("#Loading_Text").innerText = text;
+    if (!value) document.querySelector("#Loading").classList.add("Loading_Toggle");
+    if (value) document.querySelector("#Loading").classList.remove("Loading_Toggle");
+};

@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div id="Panels">
+    <div id="Panels" style="display: none;">
         <div id="Panel_ServerSelect">
             <div id="ServerSelect_Label">Locating Servers</div>
             <div id="ServerSelect_List"></div>
@@ -80,7 +80,7 @@
                 <div class="AddServer_CustomDesc">
                     <div class="LeftRight">
                         <span>Upload Custom JAR File</span>
-                        <input type="file"></input>
+                        <input type="file" id="AddServer_CustomJAR"></input>
                     </div>
                 </div>
                 <ul class="AddServer_PaperDesc">
@@ -148,6 +148,13 @@
                     Create Server
                 </button>
             </div>
+        </div>
+    </div>
+    <div id="Loading">
+        <div id="Loading_Background"></div>
+        <div id="Loading_Container">
+            <div id="Loading_Animation"></div>
+            <div id="Loading_Text">Loading</div>
         </div>
     </div>
     <script src="com.js"></script>
