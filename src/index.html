@@ -2,17 +2,26 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Minecraft Server Shell</title>
+    <meta http-equiv="Content-Security-Policy" charset="UTF-8" content="
+        default-src 'self';
+        style-src-elem 'self' https://fonts.googleapis.com;
+        font-src https://fonts.gstatic.com;
+        connect-src https://papermc.io/;
+    ">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="index.css">
+    <title>Minecraft Server Shell</title>
 </head>
 
 <body>
-    <div id="Panels" style="display: none;">
+    <div id="Panels">
         <div id="Panel_ServerSelect">
             <div id="ServerSelect_Label">Locating Servers</div>
             <div id="ServerSelect_List"></div>
-            <div style="text-align: center;">
+            <div class="textCenter">
                 <div onclick="showPanel('AddServer')" class="ServerSelect_Button">Create Server</div>
                 <div onclick="openExternal(DIR.SERVERS)" class="ServerSelect_Button">Open Server Folder</div>
             </div>
@@ -140,7 +149,7 @@
                         User License Agreement.</span></span>
             </div>
             <br />
-            <div style="text-align: center;">
+            <div class="textCenter">
                 <button class="AddServer_Btn" id="AddServer_GoBack" onclick="showPanel('ServerSelect')">
                     Back
                 </button>

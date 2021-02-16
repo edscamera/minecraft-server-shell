@@ -1,4 +1,7 @@
+/*
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+*/
+
 :root {
     --blue: #417DD1;
 }
@@ -18,10 +21,11 @@ body {
     cursor: pointer;
 }
 .ExternalLink:hover { color: var(--blue); }
+.textCenter { text-align: center; }
 input[type="checkbox"] { cursor: pointer; }
 
 #Loading {
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     width: 100%;
@@ -42,6 +46,9 @@ input[type="checkbox"] { cursor: pointer; }
     height: 100%;
 }
 #Loading_Container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -52,8 +59,8 @@ input[type="checkbox"] { cursor: pointer; }
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 6px solid blue;
-    border-color: blue transparent blue transparent;
+    border: 6px solid var(--blue);
+    border-color: var(--blue) transparent var(--blue) transparent;
     transition: .3s ease-out;
     animation: Loading_Spin 1s cubic-bezier(.57,.21,.69,1.25) infinite;
 
@@ -69,6 +76,7 @@ input[type="checkbox"] { cursor: pointer; }
     }
 }
 
+#Panels { display: none; }
 
 #ServerSelect_Label {
     text-align: center;

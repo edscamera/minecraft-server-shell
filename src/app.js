@@ -169,26 +169,8 @@ const reportErr = (tag, e) => {
     }) === 0) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
 }
 
-window.fetch("https://papermc.io/api/v2/projects/paper").then(r => r.json()).then(data => {
-    data.versions.reverse().forEach(ver => {
-        let c = Object.assign(document.createElement("option"), {
-            innerText: ver,
-        });
-        document.querySelector("#AddServer_PaperVerDrop").appendChild(c);
-    });
-    let latestver = document.querySelector("#AddServer_PaperVerDrop").children[0].innerText;
-    window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${latestver}`).then(r => r.json()).then(data2 => {
-        data2.builds.reverse().forEach(bui => {
-            let c = Object.assign(document.createElement("option"), {
-                innerText: bui,
-            });
-            document.querySelector("#AddServer_PaperBuiDrop").appendChild(c);
-        });
-        document.querySelector("#AddServer_PaperVerDrop").children[0].innerText += " (Latest)";
-        document.querySelector("#AddServer_PaperBuiDrop").children[0].innerText += " (Latest)";
-    });
-});
 document.querySelector("#AddServer_PaperVerDrop").addEventListener("change", () => {
+    setLoad(true, "Fetching Data");
     let sererver = document.querySelector("#AddServer_PaperVerDrop").value.split(" ")[0];
     while (document.querySelector("#AddServer_PaperBuiDrop").children.length > 0) document.querySelector("#AddServer_PaperBuiDrop").children[0].remove();
     window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${sererver}`).then(r => r.json()).then(data2 => {
@@ -198,11 +180,32 @@ document.querySelector("#AddServer_PaperVerDrop").addEventListener("change", () 
             });
             document.querySelector("#AddServer_PaperBuiDrop").appendChild(c);
         });
+        setLoad(false);
     });
 });
 window.addEventListener("load", () => {
-    setLoad(false);
     document.querySelector("#Panels").style.display = "block";
+    setLoad(true, "Fetching Data");
+    window.fetch("https://papermc.io/api/v2/projects/paper").then(r => r.json()).then(data => {
+        data.versions.reverse().forEach(ver => {
+            let c = Object.assign(document.createElement("option"), {
+                innerText: ver,
+            });
+            document.querySelector("#AddServer_PaperVerDrop").appendChild(c);
+        });
+        let latestver = document.querySelector("#AddServer_PaperVerDrop").children[0].innerText;
+        window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${latestver}`).then(r => r.json()).then(data2 => {
+            data2.builds.reverse().forEach(bui => {
+                let c = Object.assign(document.createElement("option"), {
+                    innerText: bui,
+                });
+                document.querySelector("#AddServer_PaperBuiDrop").appendChild(c);
+            });
+            document.querySelector("#AddServer_PaperVerDrop").children[0].innerText += " (Latest)";
+            document.querySelector("#AddServer_PaperBuiDrop").children[0].innerText += " (Latest)";
+            setLoad(false);
+        });
+    });
 });
 const setLoad = (value, text) => {
     if (text) document.querySelector("#Loading_Text").innerText = text;
