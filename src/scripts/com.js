@@ -24,3 +24,7 @@ const createLayout = (data, elmt) => {
         elmt.appendChild(c);
     });
 };
+
+
+const openExternal = (url) => require("electron").shell.openExternal(url);
+Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onclick = () => openExternal(c.getAttribute("url")) });

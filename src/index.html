@@ -22,16 +22,16 @@
             <div id="ServerSelect_Label">Locating Servers</div>
             <div id="ServerSelect_List"></div>
             <div class="textCenter">
-                <div onclick="showPanel('AddServer')" class="ServerSelect_Button">Create Server</div>
-                <div onclick="openExternal(DIR.SERVERS)" class="ServerSelect_Button">Open Server Folder</div>
+                <div id="ServerSelect_CreateServer" class="ServerSelect_Button">Create Server</div>
+                <div id="ServerSelect_OpenServerFolder" class="ServerSelect_Button">Open Server Folder</div>
             </div>
         </div>
-        <div id="Panel_AddServer">
+        <div id="Panel_CreateServer">
             <div id="ServerSelect_Label">Create a Server</div>
-            <div id="AddServer_Container">
+            <div id="CreateServer_Container">
                 <div class="LeftRight">
                     <span>Server Name</span>
-                    <input type="text" id="AddServer_Name">
+                    <input type="text" id="CreateServer_Name">
                 </div>
                 <ul>
                     <li>Your server name will not be represented in-game.</li>
@@ -40,80 +40,79 @@
                 </ul>
                 <div class="LeftRight">
                     <span>Server JAR</span>
-                    <select onchange="switchDesc()" id="AddServer_JAR">
-                        <option key="Paper">Paper</option>
-                        <option key="Vanilla">Vanilla</option>
-                        <option key="Custom">Custom</option>
+                    <select id="CreateServer_JAR">
+                        <option>Paper</option>
+                        <option>Vanilla</option>
+                        <option>Custom</option>
                     </select>
                 </div>
                 <ul>
                     <li>The server JAR is the core of your server.</li>
-                    <div class="AddServer_VanillaDesc">
-                        <li><span class="ExternalLink" onclick="openExternal('https:/\/minecraft.net')">Vanilla
+                    <div class="CreateServer_VanillaDesc">
+                        <li><span class="ExternalLink" url="https://minecraft.net">Vanilla
                                 Minecraft</span> is the base version of Minecraft,
                             developed by Mojang. If you want the true, original
                             Minecraft expierience, this is the choice for you.</li>
                         <li>A new Server JAR releases at the same time as new versions of Minecraft.</li>
                         <li>Option to use snapshots which include in development versions of the game.</li>
                     </div>
-                    <div class="AddServer_PaperDesc">
-                        <li><span class="ExternalLink" onclick="openExternal('https:/\/papermc.io')">Paper</span> gives
+                    <div class="CreateServer_PaperDesc">
+                        <li><span class="ExternalLink" url="https://papermc.io">Paper</span> gives
                             you the base expierience of Vanilla Minecraft, with various bug fixes and numerous
                             improvements and optimizations.</li>
                         <li>Optional plugin support which adds community-made extra fun to your game.</li>
                         <li>Optimized and improved, faster Minecraft server.</li>
                         <li>Little slower to update than vanilla Minecraft servers.</li>
                     </div>
-                    <div class="AddServer_CustomDesc">
+                    <div class="CreateServer_CustomDesc">
                         <li>Use a custom JAR file as a core.</li>
                     </div>
                 </ul>
-                <div class="AddServer_VanillaDesc">
+                <div class="CreateServer_VanillaDesc">
                     <div class="LeftRight">
                         <span>Minecraft Version</span>
                         <select>
                         </select>
                     </div>
                 </div>
-                <div class="AddServer_PaperDesc">
+                <div class="CreateServer_PaperDesc">
                     <div class="LeftRight">
                         <span>Paper Version</span>
-                        <select id="AddServer_PaperVerDrop"></select>
+                        <select id="CreateServer_PaperVerDrop"></select>
                     </div>
                     <br />
                     <div class="LeftRight">
                         <span>Paper Build</span>
-                        <select id="AddServer_PaperBuiDrop"></select>
+                        <select id="CreateServer_PaperBuiDrop"></select>
                     </div>
                 </div>
-                <div class="AddServer_CustomDesc">
+                <div class="CreateServer_CustomDesc">
                     <div class="LeftRight">
                         <span>Upload Custom JAR File</span>
-                        <input type="file" id="AddServer_CustomJAR"></input>
+                        <input type="file" id="CreateServer_CustomJAR"></input>
                     </div>
                 </div>
-                <ul class="AddServer_PaperDesc">
+                <ul class="CreateServer_PaperDesc">
                     <li>It is recommended you use the latest build.</li>
                     <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
                         problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file provided.
                     </li>
                     <li>Paper is not officially affiliated with Minecraft and issues should
                         be reported on their <span class="ExternalLink"
-                            onclick="openExternal('https:/\/github.com/PaperMC/Paper/issues')">GitHub page</span>.</li>
-                    <li><span class="ExternalLink"
-                            onclick="openExternal('https:/\/www.java.com/en/download/')">Java</span> is
+                            url="https://github.com/PaperMC/Paper/issues">GitHub page</span>.</li>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
+                        is
                         required to run Minecraft servers.</li>
                     <li>Server JARs/Cores can be changed after server creation.</li>
                 </ul>
-                <ul class="AddServer_VanillaDesc">
+                <ul class="CreateServer_VanillaDesc">
                     <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
                         problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file
                         provided.</li>
                     <li>Issues with Vanilla Minecraft are to be reported on their <span class="ExternalLink"
-                            onclick="openExternal('https:/\/bugs.mojang.com/secure/Dashboard.jspa')">bug tracker</span>.
+                            url="https://bugs.mojang.com/secure/Dashboard.jspa">bug tracker</span>.
                     </li>
-                    <li><span class="ExternalLink"
-                            onclick="openExternal('https:/\/www.java.com/en/download/')">Java</span>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
                         is required to run Minecraft servers.</li>
                     <li>Server JARs/Cores can be changed after server creation.</li>
                 </ul>
@@ -123,14 +122,13 @@
                     <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
                         problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file
                         provided.</li>
-                    <li><span class="ExternalLink"
-                            onclick="openExternal('https:/\/www.java.com/en/download/')">Java</span>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
                         is required to run Minecraft servers.</li>
                     <li>Server JARs/Cores can be changed after server creation.</li>
                 </ul>
                 <div class="LeftRight">
                     <span>Upload Server Icon</span>
-                    <input type="file" id="AddServer_Image"></input>
+                    <input type="file" id="CreateServer_Image"></input>
                 </div>
                 <ul>
                     <li>The image provided will be used as the server icon in both Minecraft Server Shell and Minecraft.
@@ -143,17 +141,17 @@
                     </li>
                     <li>This image can be changed after server creation.</li>
                 </ul>
-                <input type="checkbox" onchange="disableBtn()" id="AddServer_EULA"></input>
+                <input type="checkbox" id="CreateServer_EULA"></input>
                 <span>I have read and agreed to the <span className="ExternalLink"
-                        onclick="openExternal('https:/\/account.mojang.com/documents/minecraft_eula')">Minecraft End
+                        url="https://account.mojang.com/documents/minecraft_eula">Minecraft End
                         User License Agreement.</span></span>
             </div>
             <br />
             <div class="textCenter">
-                <button class="AddServer_Btn" id="AddServer_GoBack" onclick="showPanel('ServerSelect')">
+                <button class="CreateServer_Btn" id="CreateServer_GoBack">
                     Back
                 </button>
-                <button class="AddServer_Btn" disabled id="AddServer_CreateButton" onclick="createServer()">
+                <button class="CreateServer_Btn" disabled id="CreateServer_CreateButton">
                     Create Server
                 </button>
             </div>
@@ -166,8 +164,8 @@
             <div id="Loading_Text">Loading</div>
         </div>
     </div>
-    <script src="com.js"></script>
-    <script src="app.js"></script>
+    <script src="./scripts/com.js"></script>
+    <script src="./scripts/app.js"></script>
 </body>
 
 </html>

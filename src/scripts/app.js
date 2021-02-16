@@ -45,13 +45,18 @@ const updateServerList = (dir) => {
 fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
 
-const createServer = () => {
+document.querySelector("#ServerSelect_CreateServer").onclick = () => showPanel("CreateServer");
+document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => openExternal(DIR.SERVERS);
+
+document.querySelector("#CreateServer_GoBack").onclick = () => showPanel('ServerSelect');
+
+document.querySelector("#CreateServer_CreateButton").onclick = () => {
     const reterr = () => {
         setLoad(false);
         DIR.SERVER = null;
         showPanel("ServerSelect");
     };
-    const serverName = document.querySelector("#AddServer_Name").value;
+    const serverName = document.querySelector("#CreateServer_Name").value;
 
     if (/\/|\\|:|\*|\?|<|>|\|/g.test(serverName)) {
         dialog.showMessageBoxSync(null, {
@@ -99,9 +104,9 @@ const createServer = () => {
         reterr();
         return reportErr("creating the start script", e);
     }
-    if (document.querySelector("#AddServer_JAR").value === "Custom") {
+    if (document.querySelector("#CreateServer_JAR").value === "Custom") {
         try {
-            fs.copyFile(document.querySelector("#AddServer_CustomJAR").files[0].path, path.join(DIR.SERVER, "./server.jar"));
+            fs.copyFile(document.querySelector("#CreateServer_CustomJAR").files[0].path, path.join(DIR.SERVER, "./server.jar"));
         } catch (e) {
             reterr();
             return reportErr("copying the custom JAR", e);
@@ -109,8 +114,8 @@ const createServer = () => {
     }
     try {
         (async () => {
-            if (document.querySelector("#AddServer_Image").files.length > 0) {
-                const image = document.querySelector("#AddServer_Image").files[0];
+            if (document.querySelector("#CreateServer_Image").files.length > 0) {
+                const image = document.querySelector("#CreateServer_Image").files[0];
                 fs.copyFileSync(image.path, path.join(DIR.SERVER, "./server-icon-0.png"));
 
                 let pathi = fs.readFileSync(path.join(DIR.SERVER, "./server-icon-0.png"));
@@ -129,9 +134,9 @@ const createServer = () => {
     }
     (async () => {
         try {
-            if (document.querySelector("#AddServer_JAR").value === "Paper") {
-                const version = document.querySelector("#AddServer_PaperVerDrop").value.split(" ")[0];
-                const build = document.querySelector("#AddServer_PaperBuiDrop").value.split(" ")[0];
+            if (document.querySelector("#CreateServer_JAR").value === "Paper") {
+                const version = document.querySelector("#CreateServer_PaperVerDrop").value.split(" ")[0];
+                const build = document.querySelector("#CreateServer_PaperBuiDrop").value.split(" ")[0];
                 const link = `https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/paper-${version}-${build}.jar`;
                 fs.writeFileSync(path.join(DIR.SERVER, "./server.jar"), await download(link));
 
@@ -151,15 +156,17 @@ const showPanel = (panel) => {
 };
 showPanel("ServerSelect");
 
-const openExternal = (url) => require("electron").shell.openExternal(url);
-const switchDesc = () => {
-    let dropval = document.querySelector("#AddServer_JAR").value;
-    Array.from(document.getElementsByClassName("AddServer_PaperDesc")).forEach(c => c.style.display = (dropval === "Paper" ? "block" : "none"));
-    Array.from(document.getElementsByClassName("AddServer_VanillaDesc")).forEach(c => c.style.display = (dropval === "Vanilla" ? "block" : "none"));
-    Array.from(document.getElementsByClassName("AddServer_CustomDesc")).forEach(c => c.style.display = (dropval === "Custom" ? "block" : "none"));
+document.querySelector("#CreateServer_JAR").onchange = () => {
+    let dropval = document.querySelector("#CreateServer_JAR").value;
+    Array.from(document.getElementsByClassName("CreateServer_PaperDesc")).forEach(c => c.style.display = (dropval === "Paper" ? "block" : "none"));
+    Array.from(document.getElementsByClassName("CreateServer_VanillaDesc")).forEach(c => c.style.display = (dropval === "Vanilla" ? "block" : "none"));
+    Array.from(document.getElementsByClassName("CreateServer_CustomDesc")).forEach(c => c.style.display = (dropval === "Custom" ? "block" : "none"));
 };
-switchDesc();
-const disableBtn = () => document.querySelector("#AddServer_CreateButton").disabled = !document.querySelector("#AddServer_EULA").checked;
+document.querySelector("#CreateServer_JAR").onchange();
+
+let eulaCheckBox = document.querySelector("#CreateServer_EULA");
+eulaCheckBox.onchange = () => document.querySelector("#CreateServer_CreateButton").disabled = !eulaCheckBox.checked;
+
 const reportErr = (tag, e) => {
     if (dialog.showMessageBoxSync(null, {
         type: "error",
@@ -169,16 +176,16 @@ const reportErr = (tag, e) => {
     }) === 0) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
 }
 
-document.querySelector("#AddServer_PaperVerDrop").addEventListener("change", () => {
+document.querySelector("#CreateServer_PaperVerDrop").addEventListener("change", () => {
     setLoad(true, "Fetching Data");
-    let sererver = document.querySelector("#AddServer_PaperVerDrop").value.split(" ")[0];
-    while (document.querySelector("#AddServer_PaperBuiDrop").children.length > 0) document.querySelector("#AddServer_PaperBuiDrop").children[0].remove();
+    let sererver = document.querySelector("#CreateServer_PaperVerDrop").value.split(" ")[0];
+    while (document.querySelector("#CreateServer_PaperBuiDrop").children.length > 0) document.querySelector("#CreateServer_PaperBuiDrop").children[0].remove();
     window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${sererver}`).then(r => r.json()).then(data2 => {
         data2.builds.reverse().forEach(bui => {
             let c = Object.assign(document.createElement("option"), {
                 innerText: bui,
             });
-            document.querySelector("#AddServer_PaperBuiDrop").appendChild(c);
+            document.querySelector("#CreateServer_PaperBuiDrop").appendChild(c);
         });
         setLoad(false);
     });
@@ -191,18 +198,18 @@ window.addEventListener("load", () => {
             let c = Object.assign(document.createElement("option"), {
                 innerText: ver,
             });
-            document.querySelector("#AddServer_PaperVerDrop").appendChild(c);
+            document.querySelector("#CreateServer_PaperVerDrop").appendChild(c);
         });
-        let latestver = document.querySelector("#AddServer_PaperVerDrop").children[0].innerText;
+        let latestver = document.querySelector("#CreateServer_PaperVerDrop").children[0].innerText;
         window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${latestver}`).then(r => r.json()).then(data2 => {
             data2.builds.reverse().forEach(bui => {
                 let c = Object.assign(document.createElement("option"), {
                     innerText: bui,
                 });
-                document.querySelector("#AddServer_PaperBuiDrop").appendChild(c);
+                document.querySelector("#CreateServer_PaperBuiDrop").appendChild(c);
             });
-            document.querySelector("#AddServer_PaperVerDrop").children[0].innerText += " (Latest)";
-            document.querySelector("#AddServer_PaperBuiDrop").children[0].innerText += " (Latest)";
+            document.querySelector("#CreateServer_PaperVerDrop").children[0].innerText += " (Latest)";
+            document.querySelector("#CreateServer_PaperBuiDrop").children[0].innerText += " (Latest)";
             setLoad(false);
         });
     });
