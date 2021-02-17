@@ -48,6 +48,7 @@
         "download": "^8.0.0",
         "electron-reload": "^1.5.0",
         "electron-squirrel-startup": "^1.0.0",
+        "fs-extra": "^9.1.0",
         "resize-img": "^2.0.0"
     },
     "devDependencies": {

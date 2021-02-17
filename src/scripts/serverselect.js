@@ -29,5 +29,5 @@ const updateServerList = (dir) => {
 fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
 
-document.querySelector("#ServerSelect_CreateServer").onclick = () => showPanel("CreateServer");
+document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("CreateServer");
 document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => openExternal(DIR.SERVERS);

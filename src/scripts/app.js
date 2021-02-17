@@ -1,5 +1,5 @@
 /* IMPORTS */
-const fs = require("fs");
+const fs = require("fs-extra");
 const os = require("os");
 const path = require("path");
 const dialog = require("electron").remote.dialog;
@@ -18,12 +18,12 @@ if (!fs.existsSync(DIR.SERVERS)) fs.mkdirSync(DIR.SERVERS);
 /* SHOW PANEL
 // Switches screen that is being shown to the user
 */
-const showPanel = (panel) => {
+const setPanel = (panel) => {
     Array.from(document.querySelector("#Panels").children).forEach(pan => {
         pan.style.display = pan.id === `Panel_${panel}` ? "block" : "none";
     });
 };
-showPanel("ServerSelect");
+setPanel("ServerSelect");
 
 /* REPORT ERROR
 // Creates error box with error code and option to open GitHub
@@ -82,22 +82,32 @@ window.addEventListener("load", () => {
     setLoad(true, "Fetching Data");
     window.fetch("https://papermc.io/api/v2/projects/paper").then(r => r.json()).then(data => {
         data.versions.reverse().forEach(ver => {
-            let c = Object.assign(document.createElement("option"), {
-                innerText: ver,
-            });
+            let c = Object.assign(document.createElement("option"), { innerText: ver, });
             document.querySelector("#CreateServer_PaperVerDrop").appendChild(c);
         });
         let latestver = document.querySelector("#CreateServer_PaperVerDrop").children[0].innerText;
         window.fetch(`https://papermc.io/api/v2/projects/paper/versions/${latestver}`).then(r => r.json()).then(data2 => {
             data2.builds.reverse().forEach(bui => {
-                let c = Object.assign(document.createElement("option"), {
-                    innerText: bui,
-                });
+                let c = Object.assign(document.createElement("option"), { innerText: bui, });
                 document.querySelector("#CreateServer_PaperBuiDrop").appendChild(c);
             });
             document.querySelector("#CreateServer_PaperVerDrop").children[0].innerText += " (Latest)";
             document.querySelector("#CreateServer_PaperBuiDrop").children[0].innerText += " (Latest)";
-            setLoad(false);
+            window.fetch("https://launchermeta.mojang.com/mc/game/version_manifest.json").then(r => r.json()).then(data3 => {
+                data3.versions.forEach(bui2 => {
+                    let c = Object.assign(document.createElement("option"), {
+                        innerText: bui2.id,
+                        value: bui2.url,
+                    });
+                    if (c.innerText === data3.latest.release) {
+                        c.innerText += " (Stable)";
+                        c.selected = true;
+                    }
+                    document.querySelector("#CreateServer_VanillaBuiDrop").appendChild(c);
+                });
+                document.querySelector("#CreateServer_VanillaBuiDrop").children[0].innerText += " (Latest)";
+                setLoad(false);
+            });
         });
     });
 });

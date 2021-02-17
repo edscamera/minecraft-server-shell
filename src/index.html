@@ -6,7 +6,8 @@
         default-src 'self';
         style-src-elem 'self' https://fonts.googleapis.com;
         font-src https://fonts.gstatic.com;
-        connect-src https://papermc.io/;
+        connect-src https://papermc.io/ https://launchermeta.mojang.com/;
+        script-src 'self' unsafe-eval;
     ">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -71,7 +72,7 @@
                 <div class="CreateServer_VanillaDesc">
                     <div class="LeftRight">
                         <span>Minecraft Version</span>
-                        <select>
+                        <select id="CreateServer_VanillaBuiDrop">
                         </select>
                     </div>
                 </div>
@@ -141,6 +142,14 @@
                     </li>
                     <li>This image can be changed after server creation.</li>
                 </ul>
+                <div class="LeftRight">
+                    <span>Memory Usage</span>
+
+                    <div>
+                        <div id="CreateServer_MemoryIndicator">1 GB</div>
+                        <input type="range" min="1" max="2" value="1" id="CreateServer_Memory">
+                    </div>
+                </div>
                 <input type="checkbox" id="CreateServer_EULA"></input>
                 <span>I have read and agreed to the <span className="ExternalLink"
                         url="https://account.mojang.com/documents/minecraft_eula">Minecraft End
