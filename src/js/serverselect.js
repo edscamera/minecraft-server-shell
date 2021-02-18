@@ -1,7 +1,3 @@
-const { Terminal } = require("xterm");
-const { FitAddon } = require("xterm-addon-fit");
-const pty = require("node-pty");
-
 const updateServerList = (dir) => {
     let subdirs = fs.readdirSync(dir, { withFileTypes: true, })
         .filter(dirent => dirent.isDirectory())
@@ -63,33 +59,7 @@ updateServerList(DIR.SERVERS);
 const openServer = (server) => {
     DIR.SERVER = path.join(DIR.SERVERS, server);
     setPanel("Terminal");
-
-    term = new Terminal();
-    while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
-    term.open(document.querySelector("#Terminal_Terminal"));
-
-    const shell = os.platform() === "win32" ? "cmd.exe" : "bash";
-    ptyProcess = pty.spawn(shell, [], {
-        name: "xterm-color",
-        cols: 80,
-        rows: 30,
-        cwd: DIR.SERVER,
-        env: process.env,
-    });
-
-    term.onData(data => ptyProcess.write(data));
-    ptyProcess.onData(data => term.write(data));
-
-
-    fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
-    window.onresize = () => {
-        fitAddon.fit();
-        ptyProcess.resize(term["_core"]["cols"], term["_core"]["rows"]);
-    };
-    window.onresize();
-
-
+    openTerminal(server);
 };
 
 const deleteServer = (server) => {

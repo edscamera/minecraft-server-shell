@@ -75,6 +75,7 @@ document.querySelector("#Navbar_Exit").onclick = () => {
             while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
             ptyProcess.kill();
             DIR.SERVER = null;
+            if (checkInt) window.clearInterval(checkInt);
             setPanel("ServerSelect");
         }
     });
@@ -153,3 +154,4 @@ Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onc
 //
 let term = null;
 let ptyProcess = null;
+let checkInt = null;
