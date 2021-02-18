@@ -2,6 +2,8 @@ const { app, BrowserWindow, dialog } = require('electron');
 require('electron-reload')(__dirname);
 const path = require('path');
 
+let SERVER_RUNNING = false;
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit();
@@ -23,15 +25,17 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     mainWindow.on("close", e => {
-        e.preventDefault();
-        dialog.showMessageBox(null, {
-            type: "question",
-            title: "Minecraft Server Shell",
-            buttons: ["Yes", "Cancel"],
-            message: "Do you really want to exit? Running servers may be corrupted during a forced shut down.",
-        }).then(response => {
-            if (response.response === 0) mainWindow.destroy();
-        });
+        if (SERVER_RUNNING) {
+            e.preventDefault();
+            dialog.showMessageBox(null, {
+                type: "question",
+                title: "Minecraft Server Shell",
+                buttons: ["Yes", "Cancel"],
+                message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+            }).then(response => {
+                if (response.response === 0) mainWindow.destroy();
+            });
+        }
     });
 };
 
