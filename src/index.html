@@ -23,10 +23,18 @@
 
 <body>
     <div id="Navbar">
-        jasdnsdfa
+        <div id="Navbar_TopOption">
+            <div class="Navbar_Option Navbar_OptionActive">Terminal</div>
+            <div class="Navbar_Option">Properties</div>
+            <div class="Navbar_Option">Backups</div>
+        </div>
+        <div id="Navbar_BottomOption">
+            <div id="Navbar_Exit" class="Navbar_Option">Back</div>
+        </div>
+
     </div>
     <div id="Panels">
-        <div id="Panel_ServerSelect">
+        <div id="Panel_ServerSelect" navbar="false">
             <div id="ServerSelect_Label">Locating Servers</div>
             <div id="ServerSelect_List"></div>
             <div class="textCenter">
@@ -34,7 +42,7 @@
                 <div id="ServerSelect_OpenServerFolder" class="ServerSelect_Button">Open Server Folder</div>
             </div>
         </div>
-        <div id="Panel_CreateServer">
+        <div id="Panel_CreateServer" navbar="false">
             <div id="ServerSelect_Label">Create a Server</div>
             <div id="CreateServer_Container">
                 <div class="LeftRight">
@@ -175,6 +183,15 @@
                     Create Server
                 </div>
             </div>
+        </div>
+        <div id="Panel_Terminal" navbar="true">
+            terminal
+        </div>
+        <div id="Panel_Properties" navbar="true">
+
+        </div>
+        <div id="Panel_Backups" navbar="true">
+
         </div>
     </div>
     <div id="Loading">

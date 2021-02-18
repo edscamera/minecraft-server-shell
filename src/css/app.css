@@ -58,4 +58,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .Button:hover { background-color: #CCCCCC; }
 
-#Panels { display: none; }
+#Panels {
+    display: none;
+    padding: 15px;
+}

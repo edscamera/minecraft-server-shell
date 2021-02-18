@@ -1,5 +1,3 @@
-const { remote } = require("electron");
-
 const updateServerList = (dir) => {
     let subdirs = fs.readdirSync(dir, { withFileTypes: true, })
         .filter(dirent => dirent.isDirectory())
@@ -39,6 +37,7 @@ const updateServerList = (dir) => {
                         tag: "span",
                         content: "Open",
                         class: ["ServerSelect_OpenAction"],
+                        onclick: () => openServer(subdirs[i]),
                     },
                     {
                         tag: "span",
@@ -56,6 +55,11 @@ const updateServerList = (dir) => {
 };
 fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
+
+const openServer = (server) => {
+    DIR.SERVER = path.join(DIR.SERVERS, server);
+    setPanel("Terminal");
+};
 
 const deleteServer = (server) => {
     dialog.showMessageBox(null, {

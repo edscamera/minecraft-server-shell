@@ -1,0 +1,27 @@
+#Navbar {
+    width: 250px;
+    background-color: #FFFFFF;
+    height: 100vh;
+    position: fixed;
+    padding-top: 15px;
+}
+.Navbar_Option {
+    padding: 15px;
+    user-select: none;
+    cursor: pointer;
+    transition: .2s ease-out;
+}
+.Navbar_Option:hover {
+    background-color: var(--blue);
+}
+.Navbar_OptionActive {
+    cursor: default!important;
+    background-color: var(--blue);
+    color: #FFFFFF;
+}
+#Navbar_BottomOption {
+    position: absolute;
+    bottom: 0px;
+    transform: translateY(-25%);
+    width: 100%;
+}

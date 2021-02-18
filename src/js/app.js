@@ -22,6 +22,13 @@ const setPanel = (panel) => {
     Array.from(document.querySelector("#Panels").children).forEach(pan => {
         pan.style.display = pan.id === `Panel_${panel}` ? "block" : "none";
     });
+    if (document.querySelector(`#Panel_${panel}`) && document.querySelector(`#Panel_${panel}`).getAttribute("navbar") === "true") {
+        document.querySelector("#Panels").style.marginLeft = "250px";
+        document.querySelector("#Navbar").style.display = "block";
+    } else {
+        document.querySelector("#Panels").style.marginLeft = "0px";
+        document.querySelector("#Navbar").style.display = "none";
+    }
 };
 setPanel("ServerSelect");
 
@@ -44,6 +51,31 @@ const setLoad = (value, text) => {
     if (text) document.querySelector("#Loading_Text").innerText = text;
     if (!value) document.querySelector("#Loading").classList.add("Loading_Toggle");
     if (value) document.querySelector("#Loading").classList.remove("Loading_Toggle");
+};
+/* NAVBAR SETUP
+// Initalizes and gives navbar functionality
+*/
+Array.from(document.querySelector("#Navbar_TopOption").children).forEach(op => {
+    op.onclick = () => {
+        Array.from(document.querySelector("#Navbar_TopOption").children).forEach(op2 => {
+            op2.classList.remove("Navbar_OptionActive");
+        });
+        op.classList.add("Navbar_OptionActive");
+        setPanel(op.innerText);
+    };
+});
+document.querySelector("#Navbar_Exit").onclick = () => {
+    dialog.showMessageBox(null, {
+        type: "question",
+        title: "Minecraft Server Shell",
+        buttons: ["Yes", "Cancel"],
+        message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+    }).then(response => {
+        if (response.response === 0) {
+            DIR.SERVER = null;
+            setPanel("ServerSelect")
+        }
+    });
 };
 
 /* CREATE LAYOUT
