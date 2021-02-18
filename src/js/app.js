@@ -72,8 +72,10 @@ document.querySelector("#Navbar_Exit").onclick = () => {
         message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
     }).then(response => {
         if (response.response === 0) {
+            while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
+            ptyProcess.kill();
             DIR.SERVER = null;
-            setPanel("ServerSelect")
+            setPanel("ServerSelect");
         }
     });
 };
@@ -147,3 +149,7 @@ window.addEventListener("load", () => {
 // Setup for .ExternalLink
 const openExternal = (url) => require("electron").shell.openExternal(url);
 Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onclick = () => openExternal(c.getAttribute("url")) });
+
+//
+let term = null;
+let ptyProcess = null;

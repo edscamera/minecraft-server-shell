@@ -55,6 +55,7 @@ input[type="range"]::-webkit-slider-thumb {
     transition: .2s ease-out;
     user-select: none;
     cursor: pointer;
+    text-align: center;
 }
 .Button:hover { background-color: #CCCCCC; }
 
