@@ -1,0 +1,28 @@
+#CreateServer_Container {
+    background-color: #FFFFFF;
+    width: 50%;
+    max-width: 600px;
+    margin: auto;
+    padding: 15px;
+    border-radius: 15px;
+}
+#CreateServer_Memory { vertical-align: middle; }
+#CreateServer_MemoryIndicator {
+    vertical-align: middle;
+    display: inline-block;
+}
+.CreateServer_Btn {
+    border: none;
+    padding: 15px;
+    margin: 0px 15px 15px 15px;
+
+    width: 180px;
+    background-color: #FFFFFF;
+    border-radius: 15px;
+
+    transition: .2s ease-out;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+}
+.CreateServer_Btn:enabled { cursor: pointer; }
+.CreateServer_Btn:enabled:hover { background-color: #CCCCCC; }

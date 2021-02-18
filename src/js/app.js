@@ -14,7 +14,6 @@ const DIR = {
 };
 if (!fs.existsSync(DIR.HOME)) fs.mkdirSync(DIR.HOME);
 if (!fs.existsSync(DIR.SERVERS)) fs.mkdirSync(DIR.SERVERS);
-let SERVER_RUNNING = false;
 
 /* SHOW PANEL
 // Switches screen that is being shown to the user
