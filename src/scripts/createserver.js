@@ -82,7 +82,7 @@ document.querySelector("#CreateServer_CreateButton").onclick = () => {
         return reportErr("accepting the EULA", e);
     }
     try {
-        fs.writeFileSync(path.join(DIR.SERVER, "./start.bat"), "java -Xms512M -Xmx2G -jar server.jar nogui");
+        fs.writeFileSync(path.join(DIR.SERVER, "./start.bat"), `java -Xms512M -Xmx${document.querySelector("#CreateServer_Memory").value}G -jar server.jar nogui`);
     } catch (e) {
         reterr();
         return reportErr("creating the start script", e);

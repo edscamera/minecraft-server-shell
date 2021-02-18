@@ -144,12 +144,16 @@
                 </ul>
                 <div class="LeftRight">
                     <span>Memory Usage</span>
-
                     <div>
-                        <div id="CreateServer_MemoryIndicator">1 GB</div>
-                        <input type="range" min="1" max="2" value="1" id="CreateServer_Memory">
+                        <div id="CreateServer_MemoryIndicator">2 GB</div>
+                        <input type="range" min="1" max="2" value="2" id="CreateServer_Memory">
                     </div>
                 </div>
+                <ul>
+                    <li>The max amount of memory or RAM your server can use at once.</li>
+                    <li>2 GB is recommended for around 10 players and around 20 plugins.</li>
+                    <li>It is recommended you do not use the maximum amount of memory available.</li>
+                </ul>
                 <input type="checkbox" id="CreateServer_EULA"></input>
                 <span>I have read and agreed to the <span className="ExternalLink"
                         url="https://account.mojang.com/documents/minecraft_eula">Minecraft End
@@ -157,12 +161,12 @@
             </div>
             <br />
             <div class="textCenter">
-                <button class="CreateServer_Btn" id="CreateServer_GoBack">
+                <div class="Button" id="CreateServer_GoBack">
                     Back
-                </button>
-                <button class="CreateServer_Btn" disabled id="CreateServer_CreateButton">
+                </div>
+                <div class="Button" disabled id="CreateServer_CreateButton">
                     Create Server
-                </button>
+                </div>
             </div>
         </div>
     </div>
