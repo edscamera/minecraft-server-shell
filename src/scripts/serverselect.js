@@ -1,3 +1,5 @@
+const { remote } = require("electron");
+
 const updateServerList = (dir) => {
     let subdirs = fs.readdirSync(dir, { withFileTypes: true, })
         .filter(dirent => dirent.isDirectory())
@@ -8,6 +10,7 @@ const updateServerList = (dir) => {
     let layout = new Array(subdirs.length).fill(null);
     for (let i = 0; i < layout.length; i++) layout[i] = {
         tag: "div",
+        class: ["ServerSelect_Server"],
         children: [
             {
                 tag: "img",
@@ -18,7 +21,32 @@ const updateServerList = (dir) => {
             {
                 tag: "span",
                 content: subdirs[i],
-                style: { marginLeft: "15px", },
+                style: {
+                    marginLeft: "15px",
+                    verticalAlign: "middle",
+                },
+            },
+            {
+                tag: "div",
+                style: {
+                    position: "absolute",
+                    top: "50%",
+                    right: "15px",
+                    transform: "translateY(-50%)",
+                },
+                children: [
+                    {
+                        tag: "span",
+                        content: "Open",
+                        class: ["ServerSelect_OpenAction"],
+                    },
+                    {
+                        tag: "span",
+                        content: "Delete",
+                        class: ["ServerSelect_DeleteAction"],
+                        onclick: () => deleteServer(subdirs[i]),
+                    }
+                ]
             }
         ],
     };
@@ -28,6 +56,17 @@ const updateServerList = (dir) => {
 };
 fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
+
+const deleteServer = (server) => {
+    dialog.showMessageBox(null, {
+        type: "question",
+        title: "Minecraft Server Shell",
+        buttons: ["Yes", "Cancel"],
+        message: `Do you really want to delete your server "${server}"? All backups and data will be gone forever. This action cannot be reversed!`,
+    }).then(response => {
+        if (response.response === 0) fs.rmdirSync(path.join(DIR.SERVERS, server), { recursive: true, });
+    });
+};
 
 document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("CreateServer");
 document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => openExternal(DIR.SERVERS);
