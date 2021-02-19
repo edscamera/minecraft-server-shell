@@ -12,7 +12,7 @@ const updateServerList = (dir) => {
         children: [
             {
                 tag: "img",
-                src: fs.existsSync(path.join(DIR.SERVERS, subdirs[i], "./server-icon.png")) ? path.join(DIR.SERVERS, subdirs[i], "./server-icon.png") : "./default.png",
+                src: fs.existsSync(path.join(DIR.SERVERS, subdirs[i], "./server-icon.png")) ? path.join(DIR.SERVERS, subdirs[i], "./server-icon.png") : "./img/default.png",
                 style: { verticalAlign: "middle", },
                 draggable: false,
             },
@@ -59,7 +59,10 @@ updateServerList(DIR.SERVERS);
 const openServer = (server) => {
     DIR.SERVER = path.join(DIR.SERVERS, server);
     setPanel("Terminal");
+    document.querySelector("#Navbar_HeaderText").innerText = server;
+    document.querySelector("#Navbar_HeaderImg").src = fs.existsSync(path.join(DIR.SERVER, "./server-icon.png")) ? path.join(DIR.SERVER, "./server-icon.png") : "./img/default.png";
     openTerminal(server);
+    openProps();
 };
 
 const deleteServer = (server) => {

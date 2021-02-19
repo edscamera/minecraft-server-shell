@@ -5,6 +5,7 @@
 :root {
     --blue: #417DD1;
     --bluehover: #305d9c;
+    --bluehover2: #69a2f1;
 }
 body {
     margin: 0px;
@@ -24,6 +25,8 @@ body {
 .ExternalLink:hover { color: var(--blue); }
 .textCenter { text-align: center; }
 input[type="checkbox"] { cursor: pointer; }
+input[type="text"] { outline: none; }
+input[type="number"] { outline: none; }
 input[type="range"] {
     -webkit-appearance: none;
     background-color: #AAA;

@@ -1,7 +1,6 @@
 const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const pty = require("node-pty");
-const Opened = require("@ronomon/opened");
 
 const openTerminal = (server) => {
     term = new Terminal();
@@ -24,8 +23,8 @@ const openTerminal = (server) => {
     fitAddon = new FitAddon();
     term.loadAddon(fitAddon);
     window.onresize = () => {
-        fitAddon.fit();
-        ptyProcess.resize(term["_core"]["cols"], term["_core"]["rows"]);
+        if (!ptyProcess.killed && document.querySelector("#Panel_Terminal").style.display === "block") fitAddon.fit();
+        if (!ptyProcess.killed) ptyProcess.resize(term["_core"]["cols"], term["_core"]["rows"]);
     };
     window.onresize();
 

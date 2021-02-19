@@ -5,6 +5,7 @@
     width: 100%;
     height: 100vh;
     transition: .3s ease-in-out;
+    transition-property: opacity;
 
     visibility: visible;
     opacity: 1;

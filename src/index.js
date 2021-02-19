@@ -20,6 +20,7 @@ const createWindow = () => {
             nodeIntegration: true,
             enableRemoteModule: true,
         },
+        icon: path.join(__dirname, "./img/icon.png"),
     });
 
     // and load the index.html of the app.

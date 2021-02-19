@@ -3,6 +3,7 @@ const fs = require("fs-extra");
 const os = require("os");
 const path = require("path");
 const dialog = require("electron").remote.dialog;
+const Opened = require("@ronomon/opened");
 
 /* SETUP DIRECTORIES
 // Located at "~/MinecraftServerShell"
@@ -24,11 +25,12 @@ const setPanel = (panel) => {
     });
     if (document.querySelector(`#Panel_${panel}`) && document.querySelector(`#Panel_${panel}`).getAttribute("navbar") === "true") {
         document.querySelector("#Panels").style.marginLeft = "250px";
-        document.querySelector("#Navbar").style.display = "block";
+        document.querySelector("#Navbar").classList.add("Navbar_Animation");
     } else {
         document.querySelector("#Panels").style.marginLeft = "0px";
-        document.querySelector("#Navbar").style.display = "none";
+        document.querySelector("#Navbar").classList.remove("Navbar_Animation");
     }
+    if (window.onresize) window.onresize();
 };
 setPanel("ServerSelect");
 
@@ -55,28 +57,41 @@ const setLoad = (value, text) => {
 /* NAVBAR SETUP
 // Initalizes and gives navbar functionality
 */
-Array.from(document.querySelector("#Navbar_TopOption").children).forEach(op => {
-    op.onclick = () => {
-        Array.from(document.querySelector("#Navbar_TopOption").children).forEach(op2 => {
-            op2.classList.remove("Navbar_OptionActive");
-        });
-        op.classList.add("Navbar_OptionActive");
-        setPanel(op.innerText);
-    };
-});
+Array.from(document.querySelector("#Navbar_TopOption").children)
+    .filter(c => c.classList.contains("Navbar_Option"))
+    .forEach(op => {
+        op.onclick = () => {
+            Array.from(document.querySelector("#Navbar_TopOption").children)
+                .filter(c => c.classList.contains("Navbar_Option"))
+                .forEach(op2 => {
+                    op2.classList.remove("Navbar_OptionActive");
+                });
+            op.classList.add("Navbar_OptionActive");
+            setPanel(op.innerText);
+        };
+    });
 document.querySelector("#Navbar_Exit").onclick = () => {
-    dialog.showMessageBox(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
-    }).then(response => {
-        if (response.response === 0) {
-            while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
-            ptyProcess.kill();
-            DIR.SERVER = null;
-            if (checkInt) window.clearInterval(checkInt);
-            setPanel("ServerSelect");
+    const exit = () => {
+        while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
+        ptyProcess.kill();
+        ptyProcess.killed = true;
+        DIR.SERVER = null;
+        if (checkInt) window.clearInterval(checkInt);
+        setPanel("ServerSelect");
+    };
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        if (!result) {
+            exit();
+        } else {
+            dialog.showMessageBox(null, {
+                type: "question",
+                title: "Minecraft Server Shell",
+                buttons: ["Yes", "Cancel"],
+                message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+            }).then(response => {
+                if (response.response === 0) exit();
+            });
         }
     });
 };
