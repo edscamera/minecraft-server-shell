@@ -68,6 +68,9 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
                 });
             op.classList.add("Navbar_OptionActive");
             setPanel(op.innerText);
+            switch (op.innerText) {
+                case "Properties": clickProps(); break;
+            }
         };
     });
 document.querySelector("#Navbar_Exit").onclick = () => {
@@ -170,3 +173,5 @@ Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onc
 let term = null;
 let ptyProcess = null;
 let checkInt = null;
+
+//

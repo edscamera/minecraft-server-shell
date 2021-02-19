@@ -1,6 +1,7 @@
 const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const pty = require("node-pty");
+const { fstat } = require("fs");
 
 const openTerminal = (server) => {
     term = new Terminal();
@@ -39,7 +40,14 @@ const checkStatus = () => {
         document.querySelector("#Terminal_Stop").setAttribute("disabled", !result);
     });
 };
-
+const checkOpen = (callback) => {
+    if (!DIR.SERVER) callback(false);
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        callback(result);
+    });
+}
+let timesran = 0;
 document.querySelector("#Terminal_Start").onclick = () => {
     if (document.querySelector("#Terminal_Start").getAttribute("disabled") === "true") return;
     ptyProcess.write("start.bat\r");
@@ -47,6 +55,7 @@ document.querySelector("#Terminal_Start").onclick = () => {
     document.querySelector("#Terminal_Start").setAttribute("disabled", true);
     document.querySelector("#Terminal_Stop").setAttribute("disabled", true);
     window.setTimeout(checkStatus, 1000);
+    timesran++;
 };
 
 document.querySelector("#Terminal_Stop").onclick = () => {
@@ -56,4 +65,8 @@ document.querySelector("#Terminal_Stop").onclick = () => {
     document.querySelector("#Terminal_Start").setAttribute("disabled", true);
     document.querySelector("#Terminal_Stop").setAttribute("disabled", true);
     window.setTimeout(checkStatus, 1000);
+
+    if (timesran === 1 && !fs.existsSync(path.join(DIR.SERVER, "default_server.properties"))) {
+        fs.copyFileSync(path.join(DIR.SERVER, "server.properties"), path.join(DIR.SERVER, "default_server.properties"));
+    }
 };
