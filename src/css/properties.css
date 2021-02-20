@@ -2,7 +2,8 @@
     background-color: #FFFFFF;
     border-radius: 15px;
     padding: 15px;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
     margin-bottom: 15px;
 }
 .Properties_TitleText {
