@@ -21,11 +21,9 @@
 #Properties_Fixedbar {
     position: fixed;
     bottom: 0px;
-    background-color: #DDD;
+    background-color: #FFF;
     padding-top: 15px;
     width: 100%;
     left: 250px;
 }
-#Properties_Clearfix {
-    height: 70px;
-}
+#Properties_Clearfix { height: 70px; }

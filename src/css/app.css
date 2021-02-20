@@ -65,6 +65,9 @@ input[type="range"]::-webkit-slider-thumb {
     opacity: 0.5;
     cursor: not-allowed!important;
 }
+.Border {
+    border: 3px solid #cccccc;
+}
 
 #Panels {
     display: none;

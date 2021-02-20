@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="./css/serverselect.css">
     <link rel="stylesheet" href="./css/xterm.css">
     <link rel="stylesheet" href="./css/properties.css">
+    <link rel="stylesheet" href="./css/backups.css">
     <title>Minecraft Server Shell</title>
 </head>
 
@@ -203,12 +204,20 @@
             <div id="Properties_Container"></div>
             <div id="Properties_Clearfix"></div>
             <div id="Properties_Fixedbar">
-                <div class="Button" id="Properties_Save">Save</div>
-                <div class="Button" id="Properties_Reset">Reset</div>
+                <div class="Button Border" id="Properties_Save">Save</div>
+                <div class="Button Border" id="Properties_Reset">Reset</div>
             </div>
         </div>
         <div id="Panel_Backups" navbar="true">
-
+            <div class="Backups_Panel">
+                <div class="Backups_Header">Backup</div>
+                <table id="Backups_Table"></table>
+                <br />
+                <div class="Button Border ButtonFix" id="Backups_Backup">Backup</div>
+            </div>
+            <div class="Backups_Panel">
+                <div class="Backups_Header">Restore</div>
+            </div>
         </div>
     </div>
     <div id="Loading">
@@ -223,6 +232,7 @@
     <script src="./js/terminal.js"></script>
     <script src="./js/serverselect.js"></script>
     <script src="./js/createserver.js"></script>
+    <script src="./js/backups.js"></script>
 </body>
 
 </html>

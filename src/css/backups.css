@@ -1,0 +1,17 @@
+.Backups_Panel {
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    display: inline-block;
+    padding: 15px;
+    width: calc(50% - 49px);
+    margin: 8px;
+}
+.Backups_Header {
+    font-size: 30px;
+    text-align: center;
+}
+#Backups_Table { width: 100%; }
+.ButtonFix {
+    margin: 0 auto;
+    display: block!important;
+}

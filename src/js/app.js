@@ -70,6 +70,7 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
             setPanel(op.innerText);
             switch (op.innerText) {
                 case "Properties": clickProps(); break;
+                case "Backups": clickBackups(); break;
             }
         };
     });
