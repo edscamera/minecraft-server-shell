@@ -14,7 +14,7 @@ const openProps = () => {
         if (prop.split("=")[0] !== "") dict[prop.split("=")[0]] = prop.split("=")[1];
     });
 
-    fs.readFile(path.join(process.cwd(), "./src/data/properties_info.json"), "utf-8", (err, text) => {
+    fs.readFile(path.join(__dirname, "./data/properties_info.json"), "utf-8", (err, text) => {
         if (err) reportErr("read the server properties", err);
 
         let p = JSON.parse(text).props;
