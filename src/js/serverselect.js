@@ -63,6 +63,10 @@ const openServer = (server) => {
     document.querySelector("#Navbar_HeaderImg").src = fs.existsSync(path.join(DIR.SERVER, "./server-icon.png")) ? path.join(DIR.SERVER, "./server-icon.png") : "./img/default.png";
     openTerminal(server);
     openProps();
+    Array.from(document.querySelector("#Navbar_TopOption").children).forEach(c => {
+        c.classList.remove("Navbar_OptionActive");
+    });
+    document.querySelector("#Navbar_TopOption").children[0].classList.add("Navbar_OptionActive");
 };
 
 const deleteServer = (server) => {

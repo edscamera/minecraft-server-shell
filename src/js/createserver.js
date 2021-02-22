@@ -90,12 +90,12 @@ document.querySelector("#CreateServer_CreateButton").onclick = () => {
 
     try {
         if (document.querySelector("#CreateServer_JAR").value === "Paper") {
-            fs.copyFileSync(path.join(process.cwd(), "./src/data/default_paper.properties"), path.join(DIR.SERVER, "server.properties"));
-            fs.copyFileSync(path.join(process.cwd(), "./src/data/default_vanilla.properties"), path.join(DIR.SERVER, "default_server.properties"));
+            fs.copyFileSync("./src/data/default_paper.properties", path.join(DIR.SERVER, "server.properties"));
+            fs.copyFileSync("./src/data/default_paper.properties", path.join(DIR.SERVER, "default_server.properties"));
         }
         if (document.querySelector("#CreateServer_JAR").value === "Vanilla") {
-            fs.copyFileSync(path.join(process.cwd(), "./src/data/default_vanilla.properties"), path.join(DIR.SERVER, "server.properties"));
-            fs.copyFileSync(path.join(process.cwd(), "./src/data/default_vanilla.properties"), path.join(DIR.SERVER, "default_server.properties"));
+            fs.copyFileSync("./src/data/default_vanilla.properties", path.join(DIR.SERVER, "server.properties"));
+            fs.copyFileSync("./src/data/default_vanilla.properties", path.join(DIR.SERVER, "default_server.properties"));
         }
     } catch (e) {
         reterr();
