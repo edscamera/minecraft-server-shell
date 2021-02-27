@@ -25,7 +25,9 @@ document.querySelector("#CreateServer_PaperVerDrop").addEventListener("change", 
 });
 
 let eulaCheckBox = document.querySelector("#CreateServer_EULA");
-eulaCheckBox.onchange = () => document.querySelector("#CreateServer_CreateButton").disabled = !eulaCheckBox.checked;
+document.querySelector("#CreateServer_EULAText").onclick = () => eulaCheckBox.click();
+eulaCheckBox.onchange = () => document.querySelector("#CreateServer_CreateButton").setAttribute("disabled", !eulaCheckBox.checked);
+eulaCheckBox.onchange();
 
 const slider = document.querySelector("#CreateServer_Memory");
 slider.max = Math.floor(os.totalmem() / 1024 / 1024 / 1024);
