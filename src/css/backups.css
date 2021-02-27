@@ -2,8 +2,8 @@
 .Backups_Panel {
     background-color: #FFFFFF;
     border-radius: 15px;
+    padding: 15px;
     flex: 1;
-    padding-right: 15px;
     margin: 8px;
 }
 .Backups_Header {

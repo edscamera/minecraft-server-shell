@@ -133,6 +133,8 @@ document.querySelector("#Backups_Backup").onclick = () => {
         title: "Minecraft Server Shell",
         message: "Backup created successfully!",
     });
+
+    clickBackups();
     setLoad(false);
 };
 
