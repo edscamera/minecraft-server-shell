@@ -35,6 +35,7 @@
             <div class="Navbar_Option Navbar_OptionActive">Terminal</div>
             <div class="Navbar_Option">Properties</div>
             <div class="Navbar_Option">Backups</div>
+            <div class="Navbar_Option">Port Forwarding</div>
         </div>
         <div id="Navbar_BottomOption">
             <div id="Navbar_Exit" class="Navbar_Option">Exit Server</div>
@@ -223,6 +224,43 @@
                 </div>
             </div>
         </div>
+        <div id="Panel_PortForwarding" navbar="true">
+            <div class="Properties_SubContainer">
+                <div class="LeftRight">
+                    <span>Setup Port Forwarding</span>
+                    <span class="ExternalLink" id="PortForwarding_DefaultGateway">Loading</span>
+                </div>
+                <ul>
+                    <li>Port forwarding is how people connect to your server from around the world.</li>
+                    <li>Configure port forwarding in your router settings at the default gateway.</li>
+                    <li>Virtual machine or FTP software being installed on this computer may cause errors on this
+                        screen.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Local Address</span>
+                    <span>localhost</span>
+                </div>
+                <ul>
+                    <li>Minecraft can connect to a running server if both are being ran on the same computer via the ip
+                        "localhost"</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Private Address</span>
+                    <span id="PortForwarding_Private">Loading</span>
+                </div>
+                <ul>
+                    <li>People on your local network can connect to your Minecraft server using this IP address.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Public Address</span>
+                    <span id="PortForwarding_Public">Loading</span>
+                </div>
+                <ul>
+                    <li>People around the world can connect to your server via this address if port forwarding is set
+                        up.</li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div id="Loading">
         <div id="Loading_Background"></div>
@@ -237,6 +275,7 @@
     <script src="./js/serverselect.js"></script>
     <script src="./js/createserver.js"></script>
     <script src="./js/backups.js"></script>
+    <script src="./js/portforwarding.js"></script>
 </body>
 
 </html>

@@ -67,10 +67,11 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
                     op2.classList.remove("Navbar_OptionActive");
                 });
             op.classList.add("Navbar_OptionActive");
-            setPanel(op.innerText);
+            setPanel(op.innerText.replace(/\s/g, ""));
             switch (op.innerText) {
                 case "Properties": clickProps(); break;
                 case "Backups": clickBackups(); break;
+                case "Port Forwarding": clickPortForwarding(); break;
             }
         };
     });
