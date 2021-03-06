@@ -1,0 +1,10 @@
+.Plugins_Container {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    width: calc(100% - 30px);
+    max-width: 600px;
+}
+#Plugins_PluginTable {
+    width: 100%;
+}

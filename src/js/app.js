@@ -60,7 +60,7 @@ const setLoad = (value, text) => {
 Array.from(document.querySelector("#Navbar_TopOption").children)
     .filter(c => c.classList.contains("Navbar_Option"))
     .forEach(op => {
-        op.onclick = () => {
+        op.addEventListener("click", () => {
             Array.from(document.querySelector("#Navbar_TopOption").children)
                 .filter(c => c.classList.contains("Navbar_Option"))
                 .forEach(op2 => {
@@ -72,8 +72,9 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
                 case "Properties": clickProps(); break;
                 case "Backups": clickBackups(); break;
                 case "Port Forwarding": clickPortForwarding(); break;
+                case "Plugins": clickPlugins(); break;
             }
-        };
+        });
     });
 document.querySelector("#Navbar_Open").onclick = () => openExternal(DIR.SERVER);
 document.querySelector("#Navbar_Exit").onclick = () => {
@@ -172,9 +173,6 @@ window.addEventListener("load", () => {
 const openExternal = (url) => require("electron").shell.openExternal(url);
 Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onclick = () => openExternal(c.getAttribute("url")) });
 
-//
 let term = null;
 let ptyProcess = null;
 let checkInt = null;
-
-//

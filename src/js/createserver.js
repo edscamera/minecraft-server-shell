@@ -110,13 +110,24 @@ document.querySelector("#CreateServer_CreateButton").onclick = () => {
     }
 
     try {
+        fs.writeFileSync(path.join(DIR.SERVER, "./meta.json"), JSON.stringify({
+            name: serverName,
+            core: document.querySelector("#CreateServer_JAR").value,
+            memory: document.querySelector("#CreateServer_Memory").value,
+        }));
+    } catch (e) {
+        reterr();
+        return reportErr("writing metadata", e);
+    }
+
+    try {
         (async () => {
             if (document.querySelector("#CreateServer_Image").files.length > 0) {
                 const image = document.querySelector("#CreateServer_Image").files[0];
                 fs.copyFileSync(image.path, path.join(DIR.SERVER, "./server-icon-0.png"));
 
                 let pathi = fs.readFileSync(path.join(DIR.SERVER, "./server-icon-0.png"));
-                const img2 = await resizeImg(Buffer(pathi), {
+                const img2 = await resizeImg(Buffer.from(pathi), {
                     width: 64,
                     height: 64,
                     format: "png",

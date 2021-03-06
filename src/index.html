@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="./css/xterm.css">
     <link rel="stylesheet" href="./css/properties.css">
     <link rel="stylesheet" href="./css/backups.css">
+    <link rel="stylesheet" href="./css/plugins.css">
     <title>Minecraft Server Shell</title>
 </head>
 
@@ -32,10 +33,11 @@
         </div>
 
         <div id="Navbar_TopOption">
-            <div class="Navbar_Option Navbar_OptionActive">Terminal</div>
-            <div class="Navbar_Option">Properties</div>
-            <div class="Navbar_Option">Backups</div>
-            <div class="Navbar_Option">Port Forwarding</div>
+            <div modOnly="false" class="Navbar_Option Navbar_OptionActive">Terminal</div>
+            <div modOnly="false" class="Navbar_Option">Properties</div>
+            <div modOnly="false" class="Navbar_Option">Backups</div>
+            <div modOnly="true" class="Navbar_Option">Plugins</div>
+            <div modOnly="false" class="Navbar_Option">Port Forwarding</div>
         </div>
         <div id="Navbar_BottomOption">
             <div id="Navbar_Open" class="Navbar_Option">Open Folder</div>
@@ -262,6 +264,13 @@
                 </ul>
             </div>
         </div>
+        <div id="Panel_Plugins" navbar="true">
+            <div class="Plugins_Container">
+                <table id="Plugins_PluginTable">
+
+                </table>
+            </div>
+        </div>
     </div>
     <div id="Loading">
         <div id="Loading_Background"></div>
@@ -276,6 +285,7 @@
     <script src="./js/serverselect.js"></script>
     <script src="./js/createserver.js"></script>
     <script src="./js/backups.js"></script>
+    <script src="./js/plugins.js"></script>
     <script src="./js/portforwarding.js"></script>
 </body>
 

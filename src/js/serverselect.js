@@ -63,8 +63,11 @@ const openServer = (server) => {
     document.querySelector("#Navbar_HeaderImg").src = fs.existsSync(path.join(DIR.SERVER, "./server-icon.png")) ? path.join(DIR.SERVER, "./server-icon.png") : "./img/default.png";
     openTerminal(server);
     openProps();
+    const a = JSON.parse(fs.readFileSync(path.join(DIR.SERVER, "meta.json"), "utf-8"));
     Array.from(document.querySelector("#Navbar_TopOption").children).forEach(c => {
         c.classList.remove("Navbar_OptionActive");
+        c.style.display = "block";
+        if (a.core === "Vanilla") c.style.display = c.getAttribute("modOnly") == "true" ? "none" : "block";
     });
     document.querySelector("#Navbar_TopOption").children[0].classList.add("Navbar_OptionActive");
 };
