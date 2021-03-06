@@ -75,6 +75,7 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
             }
         };
     });
+document.querySelector("#Navbar_Open").onclick = () => openExternal(DIR.SERVER);
 document.querySelector("#Navbar_Exit").onclick = () => {
     const exit = () => {
         while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();
