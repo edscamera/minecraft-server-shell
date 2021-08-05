@@ -1,0 +1,75 @@
+/*
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+*/
+
+:root {
+    --blue: #417DD1;
+    --bluehover: #305d9c;
+    --bluehover2: #69a2f1;
+}
+body {
+    margin: 0px;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--blue);
+}
+.LeftRight {
+    display: flex;
+    justify-content: space-between;
+}
+.ExternalLink {
+    color:#0000FF;
+    user-select: none;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+.ExternalLink:hover { color: var(--blue); }
+.textCenter { text-align: center; }
+input[type="checkbox"] { cursor: pointer; }
+input[type="text"] { outline: none; }
+input[type="number"] { outline: none; }
+input[type="range"] {
+    -webkit-appearance: none;
+    background-color: #AAA;
+    width: 130px;
+    border-radius: 15px;
+    opacity:0.7;
+    outline: none;
+    cursor: pointer;
+    transition: .3s ease-out;
+}
+input[type="range"]:hover { opacity: 1; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; 
+  background: var(--blue);
+}
+.Button {
+    display: inline-block;
+    padding: 15px;
+    margin: 0px 15px 15px 15px;
+
+    width: 180px;
+    background-color: #FFFFFF;
+    border-radius: 15px;
+
+    transition: .2s ease-out;
+    user-select: none;
+    cursor: pointer;
+    text-align: center;
+}
+.Button:hover:not([disabled*=true]) { background-color: #CCCCCC; }
+.Button[disabled=true] {
+    opacity: 0.5;
+    cursor: not-allowed!important;
+}
+.Border {
+    border: 3px solid #cccccc;
+}
+
+#Panels {
+    display: none;
+    padding: 15px;
+}

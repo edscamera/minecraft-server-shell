@@ -1,0 +1,29 @@
+.Properties_SubContainer {
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 15px;
+}
+.Properties_TitleText {
+    font-size: 30px;
+    padding-bottom: 15px;
+}
+.PropCheckbox::after {
+    content: "Disabled";
+    padding-left: 15px;
+}
+.PropCheckbox:checked::after {
+    content: "Enabled";
+    padding-left: 15px;
+}
+#Properties_Fixedbar {
+    position: fixed;
+    bottom: 0px;
+    background-color: #FFF;
+    padding-top: 15px;
+    width: 100%;
+    left: 250px;
+}
+#Properties_Clearfix { height: 70px; }

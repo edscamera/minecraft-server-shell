@@ -1,0 +1,55 @@
+#ServerSelect_Label {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 50px;
+}
+.ServerSelect_Server {
+    position: relative;
+    margin: auto;
+    width: 50%;
+    max-width: 825px;
+    margin-bottom: 15px;
+
+    background-color: #FFFFFF;
+    
+    padding: 15px;
+    font-size: 20px;
+    user-select: none;
+
+    border-radius: 15px;
+}
+#ServerSelect_List div img {
+    width: 64px;
+    border-radius: 10px;
+}
+.ServerSelect_OpenAction {
+    padding-left: 15px;
+    color: var(--blue);
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+.ServerSelect_OpenAction:hover { color: var(--bluehover); }
+.ServerSelect_DeleteAction {
+    padding-left: 15px;
+    color: #CC0000;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+.ServerSelect_DeleteAction:hover { color: #880000; }
+.ServerSelect_Button {
+    display: inline-block;
+    padding: 15px;
+    margin: 0px 15px 15px 15px;
+
+    width: 180px;
+    background-color: #FFFFFF;
+    border-radius: 15px;
+
+    transition: .2s ease-out;
+    user-select: none;
+    cursor: pointer;
+}
+.ServerSelect_Button:first-child { background-color: #00CC00; }
+.ServerSelect_Button:first-child:hover { background-color: #00AA00; }
+.ServerSelect_Button:last-child { background-color: #FFE999; }
+.ServerSelect_Button:last-child:hover { background-color: #DDC777; }

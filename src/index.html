@@ -2,104 +2,291 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" charset="UTF-8" content="
+        default-src 'self';
+        style-src-elem 'self' https://fonts.googleapis.com;
+        font-src https://fonts.gstatic.com;
+        connect-src https://papermc.io/ https://launchermeta.mojang.com/;
+        script-src 'self' unsafe-eval;
+    ">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./css/app.css">
+    <link rel="stylesheet" href="./css/loading.css">
+    <link rel="stylesheet" href="./css/navbar.css">
+    <link rel="stylesheet" href="./css/createserver.css">
+    <link rel="stylesheet" href="./css/serverselect.css">
+    <link rel="stylesheet" href="./css/xterm.css">
+    <link rel="stylesheet" href="./css/properties.css">
+    <link rel="stylesheet" href="./css/backups.css">
+    <link rel="stylesheet" href="./css/plugins.css">
     <title>Minecraft Server Shell</title>
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="xterm.css">
 </head>
 
 <body>
-    <div id='Navbar'>
-        <ul>
-            <li class='Selected'>Console</li>
-            <li>Game Options</li>
-            <li>Backups</li>
-        </ul>
-        <ul id='Navbar-Bottom'>
-            <li id='Navbar-Back'>Back</li>
-        </ul>
+    <div id="Navbar">
+        <div id="Navbar_Header">
+            <img id="Navbar_HeaderImg" src="./img/default.png">
+            <div id="Navbar_HeaderText">Server</div>
+        </div>
+
+        <div id="Navbar_TopOption">
+            <div modOnly="false" class="Navbar_Option Navbar_OptionActive">Terminal</div>
+            <div modOnly="false" class="Navbar_Option">Properties</div>
+            <div modOnly="false" class="Navbar_Option">Backups</div>
+            <div modOnly="true" class="Navbar_Option">Plugins</div>
+            <div modOnly="false" class="Navbar_Option">Port Forwarding</div>
+        </div>
+        <div id="Navbar_BottomOption">
+            <div id="Navbar_Open" class="Navbar_Option">Open Folder</div>
+            <div id="Navbar_Exit" class="Navbar_Option">Exit Server</div>
+        </div>
+
     </div>
-    <div id='Content'>
-        <div id='Servers'>
-            <div id='Servers-DisplayText'> </div>
-            <div id='Servers-List'></div>
-            <div id='Servers-Buttons'>
-                <button class='Servers-Button' id='Servers-Add' onclick='newServer()'>Add Server</button>
-                <button class='Servers-Button' id='Servers-Folder' onclick='serverFolder()'>Open Server Folder</button>
+    <div id="Panels">
+        <div id="Panel_ServerSelect" navbar="false">
+            <div id="ServerSelect_Label">Locating Servers</div>
+            <div id="ServerSelect_List"></div>
+            <div class="textCenter">
+                <div id="ServerSelect_CreateServer" class="ServerSelect_Button">Create Server</div>
+                <div id="ServerSelect_OpenServerFolder" class="ServerSelect_Button">Open Server Folder</div>
             </div>
-            <a style='position: absolute; left: 0px; bottom: 0px;'
-                onclick='electron.shell.openExternal("https:\/\/github.com/edwardscamera/MinecraftServerShell")'>v1.0.0</a>
-            <a style='position: absolute; right: 0px; bottom: 0px;'
-                onclick='electron.shell.openExternal("http:\/\/edwardscamera.com")'>by edwardscamera</a>
         </div>
-        <div id='NewServer'>
-            <label for='NewServer-ServerName'>Server Name: </label>
-            <input type='text' id='NewServer-ServerName'>
-            <br /><br />
-            <label for='NewServer-Icon'>Server Icon: </label>
-            <input type='file' id='NewServer-Icon' accept="image/png">
-            <br /><br />
-            <label for='NewServer-CoreSelect'>Pick a Core: </label>
-            <select id='NewServer-CoreSelect'>
-                <option>Paper</option>
-                <option>Minecraft</option>
-            </select>
-            <br /><br />
-            <div style='display:block;' id='NewServer-PaperDiv'>
-                <label for='NewServer-VersionSelect'>Pick a Paper Version: </label>
-                <select id='NewServer-VersionSelect'></select>
-                <br /><br />
-                <label for='NewServer-BuildSelect'>Pick a Paper Build: </label>
-                <select id='NewServer-BuildSelect'></select>
-                <br /><br />
+        <div id="Panel_CreateServer" navbar="false">
+            <div id="ServerSelect_Label">Create a Server</div>
+            <div id="CreateServer_Container">
+                <div class="LeftRight">
+                    <span>Server Name</span>
+                    <input type="text" id="CreateServer_Name">
+                </div>
+                <ul>
+                    <li>Your server name will not be represented in-game.</li>
+                    <li>Your server name will be the name of the folder your server is in and a name only used by
+                        Minecraft Server Shell.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Server JAR</span>
+                    <select id="CreateServer_JAR">
+                        <option>Paper</option>
+                        <option>Vanilla</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
+                <ul>
+                    <li>The server JAR is the core of your server.</li>
+                    <div class="CreateServer_VanillaDesc">
+                        <li><span class="ExternalLink" url="https://minecraft.net">Vanilla
+                                Minecraft</span> is the base version of Minecraft,
+                            developed by Mojang. If you want the true, original
+                            Minecraft expierience, this is the choice for you.</li>
+                        <li>A new Server JAR releases at the same time as new versions of Minecraft.</li>
+                        <li>Option to use snapshots which include in development versions of the game.</li>
+                    </div>
+                    <div class="CreateServer_PaperDesc">
+                        <li><span class="ExternalLink" url="https://papermc.io">Paper</span> gives
+                            you the base expierience of Vanilla Minecraft, with various bug fixes and numerous
+                            improvements and optimizations.</li>
+                        <li>Optional plugin support which adds community-made extra fun to your game.</li>
+                        <li>Optimized and improved, faster Minecraft server.</li>
+                        <li>Little slower to update than vanilla Minecraft servers.</li>
+                    </div>
+                    <div class="CreateServer_CustomDesc">
+                        <li>Use a custom JAR file as a core.</li>
+                    </div>
+                </ul>
+                <div class="CreateServer_VanillaDesc">
+                    <div class="LeftRight">
+                        <span>Minecraft Version</span>
+                        <select id="CreateServer_VanillaBuiDrop">
+                        </select>
+                    </div>
+                </div>
+                <div class="CreateServer_PaperDesc">
+                    <div class="LeftRight">
+                        <span>Paper Version</span>
+                        <select id="CreateServer_PaperVerDrop"></select>
+                    </div>
+                    <br />
+                    <div class="LeftRight">
+                        <span>Paper Build</span>
+                        <select id="CreateServer_PaperBuiDrop"></select>
+                    </div>
+                </div>
+                <div class="CreateServer_CustomDesc">
+                    <div class="LeftRight">
+                        <span>Upload Custom JAR File</span>
+                        <input type="file" id="CreateServer_CustomJAR"></input>
+                    </div>
+                </div>
+                <ul class="CreateServer_PaperDesc">
+                    <li>It is recommended you use the latest build.</li>
+                    <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
+                        problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file provided.
+                    </li>
+                    <li>Paper is not officially affiliated with Minecraft and issues should
+                        be reported on their <span class="ExternalLink"
+                            url="https://github.com/PaperMC/Paper/issues">GitHub page</span>.</li>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
+                        is
+                        required to run Minecraft servers.</li>
+                    <li>Server JARs/Cores can be changed after server creation.</li>
+                </ul>
+                <ul class="CreateServer_VanillaDesc">
+                    <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
+                        problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file
+                        provided.</li>
+                    <li>Issues with Vanilla Minecraft are to be reported on their <span class="ExternalLink"
+                            url="https://bugs.mojang.com/secure/Dashboard.jspa">bug tracker</span>.
+                    </li>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
+                        is required to run Minecraft servers.</li>
+                    <li>Server JARs/Cores can be changed after server creation.</li>
+                </ul>
+
+                <ul>
+
+                    <li>Any issues during gameplay, more specifically issues generated by the JAR file itself, is not a
+                        problem with Minecraft Server Shell. Minecraft Server Shell only executes the JAR file
+                        provided.</li>
+                    <li><span class="ExternalLink" url="https://www.java.com/en/download/">Java</span>
+                        is required to run Minecraft servers.</li>
+                    <li>Server JARs/Cores can be changed after server creation.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Upload Server Icon</span>
+                    <input type="file" id="CreateServer_Image"></input>
+                </div>
+                <ul>
+                    <li>The image provided will be used as the server icon in both Minecraft Server Shell and Minecraft.
+                        The server icon
+                        is visible in the Multiplayer menu in Minecraft.</li>
+                    <li>The image should be of a PNG file. JPG, JPEG, and BMP files will be converted automatically.
+                    </li>
+                    <li>The image provided must be 64 pixels wide and 64 pixels long. It will automatically be resized
+                        if it is not.
+                    </li>
+                    <li>This image can be changed after server creation.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Memory Usage</span>
+                    <div>
+                        <div id="CreateServer_MemoryIndicator">2 GB</div>
+                        <input type="range" min="1" max="2" value="2" id="CreateServer_Memory">
+                    </div>
+                </div>
+                <ul>
+                    <li>The max amount of memory or RAM your server can use at once.</li>
+                    <li>2 GB is recommended for around 10 players and around 20 plugins.</li>
+                    <li>It is recommended you do not use the maximum amount of memory available.</li>
+                </ul>
+                <input type="checkbox" id="CreateServer_EULA"></input>
+                <span id="CreateServer_EULAText">I have read and agreed to the <span class="ExternalLink"
+                        url="https://account.mojang.com/documents/minecraft_eula">Minecraft End
+                        User License Agreement.</span></span>
             </div>
-            <div style='display:none;' id='NewServer-MinecraftDiv'>
-                <label for='NewServer-VersionSelectB'>Pick a Minecraft Version: </label>
-                <select id='NewServer-VersionSelectB'></select>
-                <br /><br />
+            <br />
+            <div class="textCenter">
+                <div class="Button" id="CreateServer_GoBack">
+                    Back
+                </div>
+                <div class="Button" disabled id="CreateServer_CreateButton">
+                    Create Server
+                </div>
             </div>
-            <label for='NewServer-EULA'>Do you agree to the <a
-                    onclick='electron.shell.openExternal("https:\/\/account.mojang.com/documents/minecraft_eula")'>Minecraft
-                    EULA</a>?</label>
-            <input type='checkbox' id='NewServer-EULA'>
-            <br /><br />
-            <button id='NewServer-JarDownload' disabled>Create</button>
         </div>
-        <div id='Console'>
-            <div id='Console-Terminal'></div>
-            <div id='Console-Buttons'>
+        <div id="Panel_Terminal" navbar="true">
+            <div id="Terminal_Terminal"></div>
+            <div class="textCenter">
                 <br />
-                <button class='Console-Button' id='Console-Start'>Start</button>
-                <button class='Console-Button' id='Console-Stop'>Stop</button>
+                <div id="Terminal_Start" class="Button">Start Server</div>
+                <div id="Terminal_Stop" class="Button">Stop Server</div>
             </div>
         </div>
-        <div id='Options'>
-            <textarea id='Options-Textbox'></textarea>
-            <button class='Console-Button' id='Options-Save'>Save</button>
+        <div id="Panel_Properties" navbar="true">
+            <div id="Properties_Container"></div>
+            <div id="Properties_Clearfix"></div>
+            <div id="Properties_Fixedbar">
+                <div class="Button Border" id="Properties_Save">Save</div>
+                <div class="Button Border" id="Properties_Reset">Reset</div>
+            </div>
         </div>
-        <div id='Backups'>
-            <div id='Backups-Container'>
-                <div class='Backups-Tab'>
-                    <div class='Backups-Label'>Backup</div>
-                    <div class='Backups-List' id='Backups-BackupList'></div>
-                    <input id='Backups-Name' type="text" placeholder='Backup Name (Optional)'> <br />
-                    <button style='width:98%; margin: 0px;' onclick='backup()'>Backup</button>
+        <div id="Panel_Backups" navbar="true">
+            <div id="Backups_Container">
+                <div class="Backups_Panel">
+                    <div class="Backups_Header">Backup</div>
+                    <table id="Backups_Table"></table>
+                    <br />
+                    <div class="Button Border ButtonFix" id="Backups_Backup">Backup</div>
                 </div>
-                <div class='Backups-Tab'>
-                    <div class='Backups-Label'>Restore</div>
-                    <div class='Backups-List' id='Backups-RestoreList'></div>
+                <div class="Backups_Panel">
+
+                    <div class="Backups_Header">Restore</div>
+                    <table id="Backups_Table2"></table>
                 </div>
+            </div>
+        </div>
+        <div id="Panel_PortForwarding" navbar="true">
+            <div class="Properties_SubContainer">
+                <div class="LeftRight">
+                    <span>Setup Port Forwarding</span>
+                    <span class="ExternalLink" id="PortForwarding_DefaultGateway">Loading</span>
+                </div>
+                <ul>
+                    <li>Port forwarding is how people connect to your server from around the world.</li>
+                    <li>Configure port forwarding in your router settings at the default gateway.</li>
+                    <li>Virtual machine or FTP software being installed on this computer may cause errors on this
+                        screen.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Local Address</span>
+                    <span>localhost</span>
+                </div>
+                <ul>
+                    <li>Minecraft can connect to a running server if both are being ran on the same computer via the ip
+                        "localhost"</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Private Address</span>
+                    <span id="PortForwarding_Private">Loading</span>
+                </div>
+                <ul>
+                    <li>People on your local network can connect to your Minecraft server using this IP address.</li>
+                </ul>
+                <div class="LeftRight">
+                    <span>Public Address</span>
+                    <span id="PortForwarding_Public">Loading</span>
+                </div>
+                <ul>
+                    <li>People around the world can connect to your server via this address if port forwarding is set
+                        up.</li>
+                </ul>
+            </div>
+        </div>
+        <div id="Panel_Plugins" navbar="true">
+            <div class="Plugins_Container">
+                <table id="Plugins_PluginTable">
+
+                </table>
             </div>
         </div>
     </div>
-    <div id='Loading'>
-        <div id='Loading-Background'></div>
-        <div id='Loading-Subcontainer'>
-            <div id='Loading-Icon'></div>
-            <h1 id='Loading-Text'>Loading</h1>
+    <div id="Loading">
+        <div id="Loading_Background"></div>
+        <div id="Loading_Container">
+            <div id="Loading_Animation"></div>
+            <div id="Loading_Text">Loading</div>
         </div>
     </div>
-    <script src='script.js'></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/properties.js"></script>
+    <script src="./js/terminal.js"></script>
+    <script src="./js/serverselect.js"></script>
+    <script src="./js/createserver.js"></script>
+    <script src="./js/backups.js"></script>
+    <script src="./js/plugins.js"></script>
+    <script src="./js/portforwarding.js"></script>
 </body>
 
 </html>
