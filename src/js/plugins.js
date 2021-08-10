@@ -11,9 +11,7 @@ const clickPlugins = () => {
     const pluginsTable = document.querySelector("#Plugins_PluginTable");
     while (pluginsTable.children.length > 0) pluginsTable.children[0].remove();
 
-    if (plugins.length === 0) {
-        pluginsTable.innerHTML = "<div>There are no plugins installed!</div>";
-    }
+    if (plugins.length === 0) pluginsTable.innerHTML = "<div>There are no plugins installed!</div>";
 
     createLayout(plugins.map(plugin => ({
         tag: "tr",
@@ -34,17 +32,10 @@ const clickPlugins = () => {
                 children: [
                     {
                         tag: "td",
-                        content: "Deactivate",
-                        style: { paddingRight: "10px", },
-                        class: ["ServerSelect_DeleteAction"],
-                        onclick: () => toggleActive(plugin, true),
-                    },
-                    {
-                        tag: "td",
                         content: "Delete",
                         class: ["ServerSelect_DeleteAction"],
-                        onclick: () => deleteActive(dir.name, true),
-                    }
+                        onclick: () => deletePlugin(plugin),
+                    },
                 ],
             }
         ],
@@ -52,9 +43,16 @@ const clickPlugins = () => {
     setLoad(false);
 };
 
-const toggleActive = (plugin, active) => {
-
-};
-const deleteActive = (plugin, active) => {
-
+const deletePlugin = (plugin) => {
+    dialog.showMessageBox(null, {
+        type: "question",
+        title: "Minecraft Server Shell",
+        buttons: ["Yes", "Cancel"],
+        message: `Do you really want to delete the plugin "${plugin}"? All backups and data will be gone forever. This action cannot be reversed!`,
+    }).then(response => {
+        if (response.response === 0) fs.unlink(path.join(DIR.SERVER, "./plugins/", plugin), err => {
+            if (err) console.error(err);
+            clickPlugins();
+        });
+    });
 };

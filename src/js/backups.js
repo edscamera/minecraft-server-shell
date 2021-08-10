@@ -5,7 +5,24 @@ const clickBackups = () => {
     if (!fs.existsSync(path.join(DIR.SERVER, "./backups/"))) fs.mkdirSync(path.join(DIR.SERVER, "./backups/"));
     while (document.querySelector("#Backups_Table").children.length > 0) document.querySelector("#Backups_Table").children[0].remove();
     let dirs = fs.readdirSync(DIR.SERVER, { withFileTypes: true, });
-    let omit = [".console_history", "backups", "bukkit.yml", "cache", "eula.txt", "help.yml", "paper.yml", "permissions.yml", "server-icon-0.png", "default_server.properties", "start.bat", "spigot.yml", "usercache.json", "version_history.json", "commands.yml"];
+    const omit = [
+        ".console_history",
+        "backups",
+        "bukkit.yml",
+        "cache",
+        "eula.txt",
+        "help.yml",
+        "paper.yml",
+        "meta.json",
+        "permissions.yml",
+        "server-icon-0.png",
+        "default_server.properties",
+        "start.bat",
+        "spigot.yml",
+        "usercache.json",
+        "version_history.json",
+        "commands.yml"
+    ];
     let defaultsave = ["world", "world_nether", "world_the_end", "server.properties"];
     let layout = [];
     dirs.forEach(dir => {
