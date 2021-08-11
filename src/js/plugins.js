@@ -63,8 +63,47 @@ const deletePlugin = (plugin) => {
                 type: "error",
                 title: "Minecraft Server Shell",
                 buttons: ["Ok"],
-                message: "You cannot delete a plugin when the server is running!"
+                message: "You cannot delete a plugin when the server is running!",
             });
         }
     });
 };
+
+document.querySelector("#Plugins_Add").onclick = () => {
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        if (!result) {
+            let file = dialog.showOpenDialogSync();
+            if (!file) return;
+            if (!file[0].endsWith(".jar")) return dialog.showMessageBox(null, {
+                type: "error",
+                title: "Minecraft Server Shell",
+                buttons: ["Ok"],
+                message: "Plugin files must be .jar files!",
+            });
+            if (fs.existsSync(path.join(DIR.SERVER, "./plugins/", path.basename(file[0])))) {
+                dialog.showMessageBox(null, {
+                    type: "question",
+                    title: "Minecraft Server Shell",
+                    buttons: ["Yes", "Cancel"],
+                    message: `A plugin already exists by that name! Do you want to overwrite it?`,
+                }).then(response => {
+                    if (response.response === 0) {
+                        fs.copyFileSync(file[0], path.join(DIR.SERVER, "./plugins/", path.basename(file[0])));
+                        clickPlugins();
+                    }
+                });
+            } else {
+                fs.copyFileSync(file[0], path.join(DIR.SERVER, "./plugins/", path.basename(file[0])));
+                clickPlugins();
+            }
+        } else {
+            dialog.showMessageBox(null, {
+                type: "error",
+                title: "Minecraft Server Shell",
+                buttons: ["Ok"],
+                message: "You cannot add a plugin when the server is running!",
+            });
+        }
+    });
+}
