@@ -196,6 +196,14 @@
         "white-list": {
             "type": "boolean",
             "desc": "Enables a whitelist on the server.\n\nWith a whitelist enabled, users not on the whitelist will be unable to connect. Intended for private servers, such as those for real-life friends or strangers carefully selected via an application process, for example.\n\nDisabled - No white list is used.\nEnabled - The file whitelist.json is used to generate the white list.\n\nNote: Ops are automatically white listed, and there is no need to add them to the whitelist."
+        },
+        "require-resource-pack": {
+            "type": "boolean",
+            "desc": "When this option is enabled, players will be prompted for a response and will be disconnected if they decline the required pack."
+        },
+        "resource-pack-prompt": {
+            "type": "string",
+            "desc": "Optional, adds a custom message to be shown on resource pack prompt when require-resource-pack is used."
         }
     },
     "omit": [

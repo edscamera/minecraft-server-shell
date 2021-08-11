@@ -44,15 +44,27 @@ const clickPlugins = () => {
 };
 
 const deletePlugin = (plugin) => {
-    dialog.showMessageBox(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you really want to delete the plugin "${plugin}"? All backups and data will be gone forever. This action cannot be reversed!`,
-    }).then(response => {
-        if (response.response === 0) fs.unlink(path.join(DIR.SERVER, "./plugins/", plugin), err => {
-            if (err) console.error(err);
-            clickPlugins();
-        });
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        if (!result) {
+            dialog.showMessageBox(null, {
+                type: "question",
+                title: "Minecraft Server Shell",
+                buttons: ["Yes", "Cancel"],
+                message: `Do you really want to delete the plugin "${plugin}"? All backups and data will be gone forever. This action cannot be reversed!`,
+            }).then(response => {
+                if (response.response === 0) fs.unlink(path.join(DIR.SERVER, "./plugins/", plugin), err => {
+                    if (err) console.error(err);
+                    clickPlugins();
+                });
+            });
+        } else {
+            dialog.showMessageBox(null, {
+                type: "error",
+                title: "Minecraft Server Shell",
+                buttons: ["Ok"],
+                message: "You cannot delete a plugin when the server is running!"
+            });
+        }
     });
 };

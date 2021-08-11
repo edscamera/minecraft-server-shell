@@ -85,9 +85,9 @@ document.querySelector("#CreateServer_CreateButton").onclick = () => {
     }
     try {
         if (os.platform() === "win32") {
-            fs.writeFileSync(path.join(DIR.SERVER, "./start.bat"), `java -Xms512M -Xmx${document.querySelector("#CreateServer_Memory").value}G -jar server.jar --nogui`);
+            fs.writeFileSync(path.join(DIR.SERVER, "./start.bat"), `cls\njava -Xms512M -Xmx${document.querySelector("#CreateServer_Memory").value}G -jar server.jar --nogui`);
         } else {
-            fs.writeFileSync(path.join(DIR.SERVER, "./start.sh"), `exec java -Xms512M -Xmx${document.querySelector("#CreateServer_Memory").value}G -jar server.jar --nogui`);
+            fs.writeFileSync(path.join(DIR.SERVER, "./start.sh"), `clear\nexec java -Xms512M -Xmx${document.querySelector("#CreateServer_Memory").value}G -jar server.jar --nogui`);
         }
     } catch (e) {
         reterr();
