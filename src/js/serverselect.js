@@ -84,4 +84,25 @@ const deleteServer = (server) => {
 };
 
 document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("CreateServer");
-document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => openExternal(DIR.SERVERS);
+document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => {
+    openExternal(DIR.SERVERS);
+    switch (os.platform()) {
+        case "win32":
+            require("child_process").exec(`explorer ${DIR.SERVERS}`);
+            break;
+        case "linux":
+            require("child_process").exec(`xdg-open ${DIR.SERVERS}`);
+            break;
+        default:
+            require("child_process").exec(`open ${DIR.SERVERS}`);
+            dialog.showMessageBox(null, {
+                type: "info",
+                title: "Minecraft Server Shell",
+                buttons: ["Ok", "Open GitHub Repository"],
+                message: `Your operating system is not supported! Please report details in a GitHub issue.\n\n${os.platform()}`,
+            }).then(response => {
+                if (response.response === 1) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
+            });
+            break;
+    }
+}
