@@ -87,13 +87,13 @@ document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("C
 document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => {
     switch (os.platform()) {
         case "win32":
-            require("child_process").exec(`explorer ${DIR.SERVERS}`);
+            require("child_process").exec(`explorer" ${DIR.SERVERS}"`);
             break;
         case "linux":
-            require("child_process").exec(`xdg-open ${DIR.SERVERS}`);
+            require("child_process").exec(`xdg-open "${DIR.SERVERS}"`);
             break;
         default:
-            require("child_process").exec(`open ${DIR.SERVERS}`);
+            require("child_process").exec(`open "${DIR.SERVERS}"`);
             dialog.showMessageBox(null, {
                 type: "info",
                 title: "Minecraft Server Shell",

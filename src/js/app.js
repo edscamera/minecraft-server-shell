@@ -79,13 +79,13 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
 document.querySelector("#Navbar_Open").onclick = () => {
     switch (os.platform()) {
         case "win32":
-            require("child_process").exec(`explorer ${DIR.SERVER}`);
+            require("child_process").exec(`explorer "${DIR.SERVER}"`);
             break;
         case "linux":
-            require("child_process").exec(`xdg-open ${DIR.SERVER}`);
+            require("child_process").exec(`xdg-open "${DIR.SERVER}"`);
             break;
         default:
-            require("child_process").exec(`open ${DIR.SERVER}`);
+            require("child_process").exec(`open "${DIR.SERVER}"`);
             dialog.showMessageBox(null, {
                 type: "info",
                 title: "Minecraft Server Shell",
