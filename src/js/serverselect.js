@@ -85,7 +85,6 @@ const deleteServer = (server) => {
 
 document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("CreateServer");
 document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => {
-    openExternal(DIR.SERVERS);
     switch (os.platform()) {
         case "win32":
             require("child_process").exec(`explorer ${DIR.SERVERS}`);

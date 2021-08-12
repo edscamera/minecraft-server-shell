@@ -50,7 +50,7 @@ const checkOpen = (callback) => {
 let timesran = 0;
 document.querySelector("#Terminal_Start").onclick = () => {
     if (document.querySelector("#Terminal_Start").getAttribute("disabled") === "true") return;
-    ptyProcess.write(os.platform() === "win32" ? "start.bat\r" : "./start.sh\r");
+    ptyProcess.write(os.platform() === "win32" ? "start.bat\r" : "sh start.sh\r");
     term.clear();
     document.querySelector("#Terminal_Start").setAttribute("disabled", true);
     document.querySelector("#Terminal_Stop").setAttribute("disabled", true);
