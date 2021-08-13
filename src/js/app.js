@@ -5,6 +5,24 @@ const path = require("path");
 const dialog = require("electron").remote.dialog;
 const Opened = require("@ronomon/opened");
 
+/* CHECK FOR UPDATES
+// Compares version with json "server"
+*/
+const application_version = "2.0.0";
+console.log(`%c MINECRAFT SERVER SHELL VERSION ${application_version} `, 'background: #ff0; color: #000;');
+fetch("http://edwardscamera.com/application_data.json")
+    .then(raw => raw.json())
+    .then(data => {
+        if (application_version !== data["minecraft-server-shell"].version) {
+            if (dialog.showMessageBoxSync(null, {
+                type: "info",
+                title: "Minecraft Server Shell",
+                message: `A new update is available! Download the new version on GitHub.`,
+                buttons: ["Open GitHub", "Close"],
+            }) === 0) openExternal("https://github.com/edwardscamera/minecraft-server-shell/releases");
+        }
+    });
+
 /* SETUP DIRECTORIES
 // Located at "~/MinecraftServerShell"
 */
