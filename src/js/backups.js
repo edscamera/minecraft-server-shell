@@ -135,37 +135,49 @@ const clickBackups = () => {
 };
 
 document.querySelector("#Backups_Backup").onclick = () => {
-    setLoad(true, "Creating Backup");
-    if (dialog.showMessageBoxSync(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you want to create a backup with these settings?`,
-    }) === 1) return;
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        if (!result) {
+            setLoad(true, "Creating Backup");
+            if (dialog.showMessageBoxSync(null, {
+                type: "question",
+                title: "Minecraft Server Shell",
+                buttons: ["Yes", "Cancel"],
+                message: `Do you want to create a backup with these settings?`,
+            }) === 1) return;
 
-    // Make Backup Folder
-    let subdirs = fs.readdirSync(path.join(DIR.SERVER, "./backups/"), { withFileTypes: true, })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-    fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`));
+            // Make Backup Folder
+            let subdirs = fs.readdirSync(path.join(DIR.SERVER, "./backups/"), { withFileTypes: true, })
+                .filter(dirent => dirent.isDirectory())
+                .map(dirent => dirent.name);
+            fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`));
 
-    // Backup to Selected Directory
-    Array.from(document.querySelector("#Backups_Table").children).forEach(c => {
-        if (c.children[0].checked) {
-            fs.copySync(
-                path.join(DIR.SERVER, c.children[2].innerText),
-                path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`, c.children[2].innerText)
-            );
+            // Backup to Selected Directory
+            Array.from(document.querySelector("#Backups_Table").children).forEach(c => {
+                if (c.children[0].checked) {
+                    fs.copySync(
+                        path.join(DIR.SERVER, c.children[2].innerText),
+                        path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`, c.children[2].innerText)
+                    );
+                }
+            });
+            dialog.showMessageBoxSync(null, {
+                type: "info",
+                title: "Minecraft Server Shell",
+                message: "Backup created successfully!",
+            });
+
+            clickBackups();
+            setLoad(false);
+        } else {
+            dialog.showMessageBox(null, {
+                type: "error",
+                title: "Minecraft Server Shell",
+                buttons: ["Ok"],
+                message: `You cannot create a backup when a server is running!`,
+            });
         }
     });
-    dialog.showMessageBoxSync(null, {
-        type: "info",
-        title: "Minecraft Server Shell",
-        message: "Backup created successfully!",
-    });
-
-    clickBackups();
-    setLoad(false);
 };
 
 const deleteBackup = (backup) => {
