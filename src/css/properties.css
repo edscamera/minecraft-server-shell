@@ -1,5 +1,5 @@
 .Properties_SubContainer {
-    background-color: #FFFFFF;
+    background-color: #fff;
     border-radius: 15px;
     padding: 15px;
     width: 100%;
@@ -21,7 +21,7 @@
 #Properties_Fixedbar {
     position: fixed;
     bottom: 0px;
-    background-color: #FFF;
+    background-color: #fff;
     padding-top: 15px;
     width: 100%;
     left: 250px;

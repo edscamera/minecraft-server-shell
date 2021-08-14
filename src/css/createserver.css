@@ -1,5 +1,5 @@
 #CreateServer_Container {
-    background-color: #FFFFFF;
+    background-color: #fff;
     width: 50%;
     max-width: 600px;
     margin: auto;
@@ -17,7 +17,7 @@
     margin: 0px 15px 15px 15px;
 
     width: 180px;
-    background-color: #FFFFFF;
+    background-color: #fff;
     border-radius: 15px;
 
     transition: .2s ease-out;
@@ -25,4 +25,4 @@
     font-size: 15px;
 }
 .CreateServer_Btn:enabled { cursor: pointer; }
-.CreateServer_Btn:enabled:hover { background-color: #CCCCCC; }
+.CreateServer_Btn:enabled:hover { background-color: #ccc; }

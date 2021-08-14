@@ -1,6 +1,6 @@
 #Navbar {
     width: 250px;
-    background-color: #FFFFFF;
+    background-color: #fff;
     height: 100vh;
     position: fixed;
     transition: .3s ease-in-out;
@@ -19,7 +19,7 @@
 .Navbar_OptionActive {
     cursor: default!important;
     background-color: var(--blue)!important;
-    color: #FFFFFF;
+    color: #fff;
 }
 #Navbar_TopOption {
     position: absolute;
