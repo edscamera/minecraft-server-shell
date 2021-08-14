@@ -8,7 +8,7 @@ const Opened = require("@ronomon/opened");
 /* CHECK FOR UPDATES
 // Compares version with json "server"
 */
-const application_version = "2.0.0";
+const application_version = "2.1.0";
 console.log(`%c MINECRAFT SERVER SHELL VERSION ${application_version} `, 'background: #ff0; color: #000;');
 fetch("http://edwardscamera.com/application_data.json")
     .then(raw => raw.json())
@@ -72,6 +72,7 @@ const setLoad = (value, text) => {
     if (!value) document.querySelector("#Loading").classList.add("Loading_Toggle");
     if (value) document.querySelector("#Loading").classList.remove("Loading_Toggle");
 };
+
 /* NAVBAR SETUP
 // Initalizes and gives navbar functionality
 */
@@ -211,6 +212,5 @@ window.addEventListener("load", () => {
 const openExternal = (url) => require("electron").shell.openExternal(url);
 Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onclick = () => openExternal(c.getAttribute("url")) });
 
-let term = null;
 let ptyProcess = null;
 let checkInt = null;

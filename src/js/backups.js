@@ -84,12 +84,27 @@ const clickBackups = () => {
             },
             {
                 tag: "td",
-                id: `____${dir.name}`,
+                id: `FILESIZE_${dir.name}`,
                 content: (() => {
                     getSize(path.join(DIR.SERVER, "./backups/", dir.name), (err, size) => {
-                        document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024)}KB`;
-                        if (Math.ceil(size / 1024) > 1024) document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024)}MB`;
-                        if (Math.ceil(size / 1024 / 1024) > 1024) document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024 / 1024)}GB`;
+                        document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024)}KB`;
+                        if (Math.ceil(size / 1024) > 1024) document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024)}MB`;
+                        if (Math.ceil(size / 1024 / 1024) > 1024) document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024 / 1024)}GB`;
+                    });
+                    return "";
+                })(),
+            },
+            {
+                tag: "td",
+                id: `DATE_${dir.name}`,
+                content: (() => {
+                    fs.stat(path.join(DIR.SERVER, "./backups/", dir.name), (err, stats) => {
+                        if (err) throw err;
+                        const a = new Date(stats.birthtime);
+                        const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(a);
+                        const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(a);
+                        const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(a);
+                        document.querySelector(`#DATE_${dir.name}`).innerText = `${da}-${mo}-${ye}`;
                     });
                     return "";
                 })(),
@@ -127,23 +142,21 @@ document.querySelector("#Backups_Backup").onclick = () => {
         buttons: ["Yes", "Cancel"],
         message: `Do you want to create a backup with these settings?`,
     }) === 1) return;
+
+    // Make Backup Folder
     let subdirs = fs.readdirSync(path.join(DIR.SERVER, "./backups/"), { withFileTypes: true, })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
+    fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`));
 
-    let a = new Date();
-    let b = `${a.getDate().toString().length === 1 ? "0" + a.getDate().toString() : a.getDate()}-${a.getMonth().toString().length === 1 ? "0" + a.getMonth().toString() : a.getDate()}-${a.getFullYear()}`;
-
-
-    let count = 0;
-    subdirs.map(c => c.substr(0, 10)).forEach(c => {
-        if (c === b) count++;
-    });
-
-    fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `${b}-${count}`));
-
+    // Backup to Selected Directory
     Array.from(document.querySelector("#Backups_Table").children).forEach(c => {
-        if (c.children[0].checked) fs.copySync(path.join(DIR.SERVER, c.children[2].innerText), path.join(DIR.SERVER, "./backups/", `${b}-${count}`, c.children[2].innerText));
+        if (c.children[0].checked) {
+            fs.copySync(
+                path.join(DIR.SERVER, c.children[2].innerText),
+                path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`, c.children[2].innerText)
+            );
+        }
     });
     dialog.showMessageBoxSync(null, {
         type: "info",
