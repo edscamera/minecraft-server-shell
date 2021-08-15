@@ -14,12 +14,13 @@ fetch("http://edwardscamera.com/application_data.json")
     .then(raw => raw.json())
     .then(data => {
         if (application_version !== data["minecraft-server-shell"].version) {
-            if (dialog.showMessageBoxSync(null, {
-                type: "info",
-                title: "Minecraft Server Shell",
-                message: `A new update is available! Download the new version on GitHub.`,
-                buttons: ["Open GitHub", "Close"],
-            }) === 0) openExternal("https://github.com/edwardscamera/minecraft-server-shell/releases");
+            confirm(
+                "A new update is available! Download the new version on GitHub.",
+                ["Open GitHub", "Ok"],
+                (ans) => {
+                    if (ans === 0) openExternal("https://github.com/edwardscamera/minecraft-server-shell/releases");
+                },
+            );
         }
     });
 
@@ -73,6 +74,28 @@ const setLoad = (value, text) => {
     if (value) document.querySelector("#Loading").classList.remove("Loading_Toggle");
 };
 
+const confirm = (question, buttons, callback) => {
+    document.querySelector("#ConfirmBox_Question").innerText = question;
+    const buttonParent = document.querySelector("#ConfirmBox_Buttons");
+    while (buttonParent.children.length > 0) buttonParent.children[0].remove();
+
+    buttons.forEach(btn => {
+        let myBtn = document.createElement("div");
+        Object.assign(myBtn, {
+            innerText: btn,
+            onclick: () => {
+                document.querySelector("#ConfirmBox").classList.add("ConfirmBox_Toggle");
+                callback(buttons.indexOf(btn));
+            },
+        });
+        myBtn.classList.add("Button", "Border");
+        myBtn.style.width = "90px";
+        buttonParent.appendChild(myBtn);
+    });
+
+    document.querySelector("#ConfirmBox").classList.remove("ConfirmBox_Toggle");
+};
+
 /* NAVBAR SETUP
 // Initalizes and gives navbar functionality
 */
@@ -104,15 +127,14 @@ document.querySelector("#Navbar_Open").onclick = () => {
             require("child_process").exec(`xdg-open "${DIR.SERVER}"`);
             break;
         default:
+            confirm(
+                `Your operating system is not supported! Please report details in a GitHub issue.\n\n${os.platform()}`,
+                ["Open GitHub", "Ok"],
+                (ans) => {
+                    if (ans === 0) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
+                }
+            );
             require("child_process").exec(`open "${DIR.SERVER}"`);
-            dialog.showMessageBox(null, {
-                type: "info",
-                title: "Minecraft Server Shell",
-                buttons: ["Ok", "Open GitHub Repository"],
-                message: `Your operating system is not supported! Please report details in a GitHub issue.\n\n${os.platform()}`,
-            }).then(response => {
-                if (response.response === 1) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
-            });
             break;
     }
 }
@@ -130,14 +152,13 @@ document.querySelector("#Navbar_Exit").onclick = () => {
         if (!result) {
             exit();
         } else {
-            dialog.showMessageBox(null, {
-                type: "question",
-                title: "Minecraft Server Shell",
-                buttons: ["Yes", "Cancel"],
-                message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
-            }).then(response => {
-                if (response.response === 0) exit();
-            });
+            confirm(
+                "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+                ["Yes", "Cancel"],
+                (ans) => {
+                    if (ans === 0) exit();
+                }
+            );
         }
     });
 };

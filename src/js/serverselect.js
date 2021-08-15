@@ -73,14 +73,13 @@ const openServer = (server) => {
 };
 
 const deleteServer = (server) => {
-    dialog.showMessageBox(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you really want to delete your server "${server}"? All backups and data will be gone forever. This action cannot be reversed!`,
-    }).then(response => {
-        if (response.response === 0) fs.rmdirSync(path.join(DIR.SERVERS, server), { recursive: true, });
-    });
+    confirm(
+        `Do you really want to delete your server "${server}"? All backups and data will be gone forever. This action cannot be reversed!`,
+        ["Yes", "Cancel"],
+        (ans => {
+            if (ans === 0) fs.rmdirSync(path.join(DIR.SERVERS, server), { recursive: true, })
+        }),
+    );
 };
 
 document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("CreateServer");
@@ -94,14 +93,11 @@ document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => {
             break;
         default:
             require("child_process").exec(`open "${DIR.SERVERS}"`);
-            dialog.showMessageBox(null, {
-                type: "info",
-                title: "Minecraft Server Shell",
-                buttons: ["Ok", "Open GitHub Repository"],
-                message: `Your operating system is not supported! Please report details in a GitHub issue.\n\n${os.platform()}`,
-            }).then(response => {
-                if (response.response === 1) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
-            });
+            confirm(
+                `Your operating system is not supported! Please report details in a GitHub issue. (${os.platform()})`,
+                ["Open GitHub", "Ok"],
+                (ans) => { },
+            );
             break;
     }
 }
