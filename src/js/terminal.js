@@ -3,6 +3,8 @@ const { FitAddon } = require("xterm-addon-fit");
 const pty = require("node-pty");
 const { fstat } = require("fs");
 
+let term = null;
+
 const openTerminal = (server) => {
     term = new Terminal();
     while (document.querySelector("#Terminal_Terminal").children.length > 0) document.querySelector("#Terminal_Terminal").children[0].remove();

@@ -10,7 +10,7 @@
     max-width: 825px;
     margin-bottom: 15px;
 
-    background-color: #FFFFFF;
+    background-color: #fff;
     
     padding: 15px;
     font-size: 20px;
@@ -31,25 +31,25 @@
 .ServerSelect_OpenAction:hover { color: var(--bluehover); }
 .ServerSelect_DeleteAction {
     padding-left: 15px;
-    color: #CC0000;
+    color: #c00;
     transition: .2s ease-out;
     cursor: pointer;
 }
-.ServerSelect_DeleteAction:hover { color: #880000; }
+.ServerSelect_DeleteAction:hover { color: #800; }
 .ServerSelect_Button {
     display: inline-block;
     padding: 15px;
     margin: 0px 15px 15px 15px;
 
     width: 180px;
-    background-color: #FFFFFF;
+    background-color: #fff;
     border-radius: 15px;
 
     transition: .2s ease-out;
     user-select: none;
     cursor: pointer;
 }
-.ServerSelect_Button:first-child { background-color: #00CC00; }
-.ServerSelect_Button:first-child:hover { background-color: #00AA00; }
-.ServerSelect_Button:last-child { background-color: #FFE999; }
-.ServerSelect_Button:last-child:hover { background-color: #DDC777; }
+.ServerSelect_Button:first-child { background-color: #0c0; }
+.ServerSelect_Button:first-child:hover { background-color: #0a0; }
+.ServerSelect_Button:last-child { background-color: #ffe999; }
+.ServerSelect_Button:last-child:hover { background-color: #ddc777; }

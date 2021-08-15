@@ -84,12 +84,27 @@ const clickBackups = () => {
             },
             {
                 tag: "td",
-                id: `____${dir.name}`,
+                id: `FILESIZE_${dir.name}`,
                 content: (() => {
                     getSize(path.join(DIR.SERVER, "./backups/", dir.name), (err, size) => {
-                        document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024)}KB`;
-                        if (Math.ceil(size / 1024) > 1024) document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024)}MB`;
-                        if (Math.ceil(size / 1024 / 1024) > 1024) document.querySelector(`#____${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024 / 1024)}GB`;
+                        document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024)}KB`;
+                        if (Math.ceil(size / 1024) > 1024) document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024)}MB`;
+                        if (Math.ceil(size / 1024 / 1024) > 1024) document.querySelector(`#FILESIZE_${dir.name}`).innerText = `${Math.ceil(size / 1024 / 1024 / 1024)}GB`;
+                    });
+                    return "";
+                })(),
+            },
+            {
+                tag: "td",
+                id: `DATE_${dir.name}`,
+                content: (() => {
+                    fs.stat(path.join(DIR.SERVER, "./backups/", dir.name), (err, stats) => {
+                        if (err) throw err;
+                        const a = new Date(stats.birthtime);
+                        const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(a);
+                        const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(a);
+                        const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(a);
+                        document.querySelector(`#DATE_${dir.name}`).innerText = `${da}-${mo}-${ye}`;
                     });
                     return "";
                 })(),
@@ -120,62 +135,72 @@ const clickBackups = () => {
 };
 
 document.querySelector("#Backups_Backup").onclick = () => {
-    setLoad(true, "Creating Backup");
-    if (dialog.showMessageBoxSync(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you want to create a backup with these settings?`,
-    }) === 1) return;
-    let subdirs = fs.readdirSync(path.join(DIR.SERVER, "./backups/"), { withFileTypes: true, })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
+    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+        if (err) throw err;
+        if (!result) {
+            setLoad(true, "Creating Backup");
+            confirm(
+                `Do you want to create a backup with these settings?`,
+                ["Yes", "Cancel"],
+                (ans) => {
+                    if (ans === 0) {
+                        // Make Backup Folder
+                        let subdirs = fs.readdirSync(path.join(DIR.SERVER, "./backups/"), { withFileTypes: true, })
+                            .filter(dirent => dirent.isDirectory())
+                            .map(dirent => dirent.name);
+                        fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`));
 
-    let a = new Date();
-    let b = `${a.getDate().toString().length === 1 ? "0" + a.getDate().toString() : a.getDate()}-${a.getMonth().toString().length === 1 ? "0" + a.getMonth().toString() : a.getDate()}-${a.getFullYear()}`;
-
-
-    let count = 0;
-    subdirs.map(c => c.substr(0, 10)).forEach(c => {
-        if (c === b) count++;
+                        // Backup to Selected Directory
+                        Array.from(document.querySelector("#Backups_Table").children).forEach(c => {
+                            if (c.children[0].checked) {
+                                fs.copySync(
+                                    path.join(DIR.SERVER, c.children[2].innerText),
+                                    path.join(DIR.SERVER, "./backups/", `backup-${subdirs.length}`, c.children[2].innerText)
+                                );
+                            }
+                        });
+                        confirm(
+                            "Backup created successfully!",
+                            ["Ok"],
+                            (ans) => clickBackups()
+                        );
+                    }
+                    setLoad(false);
+                }
+            );
+        } else {
+            confirm(
+                "You cannot create a backup when a server is running!",
+                ["Ok"],
+                (ans) => { }
+            );
+        }
     });
-
-    fs.mkdirSync(path.join(DIR.SERVER, "./backups/", `${b}-${count}`));
-
-    Array.from(document.querySelector("#Backups_Table").children).forEach(c => {
-        if (c.children[0].checked) fs.copySync(path.join(DIR.SERVER, c.children[2].innerText), path.join(DIR.SERVER, "./backups/", `${b}-${count}`, c.children[2].innerText));
-    });
-    dialog.showMessageBoxSync(null, {
-        type: "info",
-        title: "Minecraft Server Shell",
-        message: "Backup created successfully!",
-    });
-
-    clickBackups();
-    setLoad(false);
 };
 
 const deleteBackup = (backup) => {
-    if (dialog.showMessageBoxSync(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you want to delete the backup "${backup}"?`,
-    }) === 1) return;
-    fs.rmdirSync(path.join(DIR.SERVER, "./backups/", backup), { recursive: true, });
-    clickBackups();
+    confirm(
+        `Are you sure you want to delete the backup "${backup}"?`,
+        ["Yes", "Cancel"],
+        (ans) => {
+            if (ans === 0) {
+                fs.rmdirSync(path.join(DIR.SERVER, "./backups/", backup), { recursive: true, });
+                clickBackups();
+            }
+        },
+    );
 };
 const restoreBackup = (backup) => {
-    if (dialog.showMessageBoxSync(null, {
-        type: "question",
-        title: "Minecraft Server Shell",
-        buttons: ["Yes", "Cancel"],
-        message: `Do you want to restore the backup "${backup}"?`,
-    }) === 1) return;
-
-    fs.readdirSync(path.join(DIR.SERVER, "./backups/", backup)).forEach(file => {
-        fs.copySync(path.join(DIR.SERVER, "./backups/", backup, file), path.join(DIR.SERVER, file));
-    });
-
-    clickBackups();
+    confirm(
+        `Are you sure you want to restore the backup "${backup}"?`,
+        ["Yes", "Cancel"],
+        (ans) => {
+            if (ans === 0) {
+                fs.readdirSync(path.join(DIR.SERVER, "./backups/", backup)).forEach(file => {
+                    fs.copySync(path.join(DIR.SERVER, "./backups/", backup, file), path.join(DIR.SERVER, file));
+                });
+                clickBackups();
+            }
+        },
+    );
 };
