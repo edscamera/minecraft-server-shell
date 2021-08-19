@@ -4,13 +4,19 @@ const os = require("os");
 const path = require("path");
 const dialog = require("electron").remote.dialog;
 const Opened = require("@ronomon/opened");
+const getSize = require("get-folder-size");
+const download = require("download");
+const resizeImg = require("resize-img");
+const network = require("network");
+const { Terminal } = require("xterm");
+const { FitAddon } = require("xterm-addon-fit");
+const pty = require("node-pty");
 
-/* CHECK FOR UPDATES
+// CHECK FOR UPDATES
 // Compares version with json "server"
-*/
 const application_version = "2.1.0";
 console.log(`%c MINECRAFT SERVER SHELL VERSION ${application_version} `, 'background: #ff0; color: #000;');
-fetch("http://edwardscamera.com/application_data.json")
+fetch("https://edwardscamera.com/application_data.json")
     .then(raw => raw.json())
     .then(data => {
         if (application_version !== data["minecraft-server-shell"].version) {
@@ -24,9 +30,8 @@ fetch("http://edwardscamera.com/application_data.json")
         }
     });
 
-/* SETUP DIRECTORIES
+// SETUP DIRECTORIES
 // Located at "~/MinecraftServerShell"
-*/
 const DIR = {
     HOME: path.join(os.homedir(), "./MinecraftServerShell/"),
     SERVERS: path.join(os.homedir(), "./MinecraftServerShell/servers/"),
@@ -35,9 +40,8 @@ const DIR = {
 if (!fs.existsSync(DIR.HOME)) fs.mkdirSync(DIR.HOME);
 if (!fs.existsSync(DIR.SERVERS)) fs.mkdirSync(DIR.SERVERS);
 
-/* SHOW PANEL
+// SHOW PANEL
 // Switches screen that is being shown to the user
-*/
 const setPanel = (panel) => {
     Array.from(document.querySelector("#Panels").children).forEach(pan => {
         pan.style.display = pan.id === `Panel_${panel}` ? "block" : "none";
@@ -53,9 +57,8 @@ const setPanel = (panel) => {
 };
 setPanel("ServerSelect");
 
-/* REPORT ERROR
+// REPORT ERROR
 // Creates error box with error code and option to open GitHub
-*/
 const reportErr = (tag, e) => {
     if (dialog.showMessageBoxSync(null, {
         type: "error",
@@ -65,15 +68,16 @@ const reportErr = (tag, e) => {
     }) === 0) openExternal("https://github.com/edwardscamera/MinecraftServerShell/issues");
 }
 
-/* SET LOAD
+// SET LOAD
 // Sets status of loading screen
-*/
 const setLoad = (value, text) => {
     if (text) document.querySelector("#Loading_Text").innerText = text;
     if (!value) document.querySelector("#Loading").classList.add("Loading_Toggle");
     if (value) document.querySelector("#Loading").classList.remove("Loading_Toggle");
 };
 
+// CONFIRM
+// Confirm GUI
 const confirm = (question, buttons, callback) => {
     document.querySelector("#ConfirmBox_Question").innerText = question;
     const buttonParent = document.querySelector("#ConfirmBox_Buttons");
@@ -96,9 +100,9 @@ const confirm = (question, buttons, callback) => {
     document.querySelector("#ConfirmBox").classList.remove("ConfirmBox_Toggle");
 };
 
-/* NAVBAR SETUP
+// NAVBAR SETUP
 // Initalizes and gives navbar functionality
-*/
+const updatePanel = {};
 Array.from(document.querySelector("#Navbar_TopOption").children)
     .filter(c => c.classList.contains("Navbar_Option"))
     .forEach(op => {
@@ -110,12 +114,7 @@ Array.from(document.querySelector("#Navbar_TopOption").children)
                 });
             op.classList.add("Navbar_OptionActive");
             setPanel(op.innerText.replace(/\s/g, ""));
-            switch (op.innerText) {
-                case "Properties": clickProps(); break;
-                case "Backups": clickBackups(); break;
-                case "Port Forwarding": clickPortForwarding(); break;
-                case "Plugins": clickPlugins(); break;
-            }
+            if (op.innerText !== "Terminal") updatePanel[op.innerText.replace(/\s/g, "").toLowerCase()]();
         });
     });
 document.querySelector("#Navbar_Open").onclick = () => {
@@ -163,9 +162,8 @@ document.querySelector("#Navbar_Exit").onclick = () => {
     });
 };
 
-/* CREATE LAYOUT
+// CREATE LAYOUT
 // Dynamically converts JSON tree to HTML structure
-*/
 const createLayout = (data, elmt) => {
     data.forEach(el => {
         if (!el.tag) return;
@@ -231,7 +229,12 @@ window.addEventListener("load", () => {
 
 // Setup for .ExternalLink
 const openExternal = (url) => require("electron").shell.openExternal(url);
-Array.from(document.getElementsByClassName("ExternalLink")).forEach(c => { c.onclick = () => openExternal(c.getAttribute("url")) });
+Array.from(document.getElementsByTagName("a")).forEach(elm => {
+    elm.addEventListener("click", evt => {
+        evt.preventDefault();
+        openExternal(elm.href);
+    });
+});
 
 let ptyProcess = null;
 let checkInt = null;

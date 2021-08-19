@@ -1,6 +1,3 @@
-const download = require("download");
-const resizeImg = require("resize-img");
-
 document.querySelector("#CreateServer_JAR").onchange = () => {
     let dropval = document.querySelector("#CreateServer_JAR").value;
     Array.from(document.getElementsByClassName("CreateServer_PaperDesc")).forEach(c => c.style.display = (dropval === "Paper" ? "block" : "none"));

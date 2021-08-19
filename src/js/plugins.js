@@ -1,4 +1,4 @@
-const clickPlugins = () => {
+updatePanel["plugins"] = () => {
     setLoad(true, "Loading Plugins");
 
     if (!fs.existsSync(path.join(DIR.SERVER, "./plugins/"))) fs.mkdirSync(path.join(DIR.SERVER, "./plugins/"));

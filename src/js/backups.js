@@ -1,6 +1,4 @@
-const getSize = require("get-folder-size");
-
-const clickBackups = () => {
+updatePanel["backups"] = () => {
     setLoad(true, "Reading Directory");
     if (!fs.existsSync(path.join(DIR.SERVER, "./backups/"))) fs.mkdirSync(path.join(DIR.SERVER, "./backups/"));
     while (document.querySelector("#Backups_Table").children.length > 0) document.querySelector("#Backups_Table").children[0].remove();

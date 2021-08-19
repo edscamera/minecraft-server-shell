@@ -1,8 +1,18 @@
 String.prototype.toProperCase = function () {
     return this.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
 };
-const openProps = () => {
+updatePanel["properties"] = () => {
     setLoad(true, "Loading Properties");
+    if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) {
+        confirm(
+            "The properties file could not be found. Make sure you ran the server at least once before trying to change the properties.",
+            ["Ok"],
+            (ans) => { },
+        );
+        document.querySelector("#Navbar_TopOption").children[0].click();
+        setLoad(false);
+        return;
+    }
     while (document.querySelector("#Properties_Container").children.length > 0) document.querySelector("#Properties_Container").children[0].remove();
 
     if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) return setLoad(false);
@@ -55,7 +65,7 @@ const openProps = () => {
                         },
                         { tag: "br", },
                         (() => {
-                            if (!p[key] || p[key].type.includes("string")) return {
+                            if (p[key] == undefined || p[key].type.includes("string")) return {
                                 tag: "input",
                                 type: "text",
                                 value: dict[key],
@@ -63,9 +73,10 @@ const openProps = () => {
                             if (p[key].type.includes("boolean")) return {
                                 tag: "input",
                                 type: "checkbox",
-                                checked: dict[key],
+                                checked: dict[key] == "true",
                                 class: ["PropCheckbox"],
                             };
+
                             if (p[key].type.includes("int")) return {
                                 tag: "input",
                                 type: "number",
@@ -101,24 +112,11 @@ const openProps = () => {
     });
     setLoad(false);
 };
-const clickProps = () => {
-    if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) {
-        confirm(
-            "The properties file could not be found. Make sure you ran the server at least once before trying to change the properties.",
-            ["Ok"],
-            (ans) => { },
-        );
-        document.querySelector("#Navbar_TopOption").children[0].click();
-        setLoad(false);
-        return;
-    }
-    openProps();
-};
 document.querySelector("#Properties_Save").onclick = () => {
     checkOpen(result => {
         if (!result) {
             confirm(
-                "Are you sure you want to save these changes?"
+                "Are you sure you want to save these changes?",
                 ["Yes", "Cancel"],
                 (ans) => {
                     if (ans === 0) {

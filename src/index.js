@@ -6,15 +6,13 @@ let SERVER_RUNNING = false;
 app.allowRendererProcessReuse = false;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-    app.quit();
-}
+if (require('electron-squirrel-startup')) app.quit();
 
 const createWindow = () => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
@@ -27,17 +25,15 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     mainWindow.on("close", e => {
-        if (SERVER_RUNNING) {
-            e.preventDefault();
-            dialog.showMessageBox(null, {
-                type: "question",
-                title: "Minecraft Server Shell",
-                buttons: ["Yes", "Cancel"],
-                message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
-            }).then(response => {
-                if (response.response === 0) mainWindow.destroy();
-            });
-        }
+        e.preventDefault();
+        dialog.showMessageBox(null, {
+            type: "question",
+            title: "Minecraft Server Shell",
+            buttons: ["Yes", "Cancel"],
+            message: "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+        }).then(response => {
+            if (response.response === 0) mainWindow.destroy();
+        });
     });
 };
 
@@ -58,6 +54,3 @@ app.on('activate', () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

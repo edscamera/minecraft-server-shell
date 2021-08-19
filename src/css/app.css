@@ -16,13 +16,14 @@ body {
     display: flex;
     justify-content: space-between;
 }
-.ExternalLink {
+a, .ExternalLink {
     color:#00f;
     user-select: none;
     transition: .2s ease-out;
     cursor: pointer;
+    text-decoration: none;
 }
-.ExternalLink:hover { color: var(--blue); }
+a:hover { color: var(--blue); }
 .textCenter { text-align: center; }
 input[type="checkbox"] { cursor: pointer; }
 input[type="text"] { outline: none; }

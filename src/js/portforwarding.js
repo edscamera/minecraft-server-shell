@@ -1,5 +1,4 @@
-const network = require("network");
-const clickPortForwarding = () => {
+updatePanel["portforwarding"] = () => {
     network.get_gateway_ip((err, ip) => {
         if (err) {
             console.log(err);
