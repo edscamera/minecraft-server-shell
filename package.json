@@ -1,7 +1,7 @@
 {
-    "name": "minecraft-server-shell",
+    "name": "minecraftservershell",
     "productName": "Minecraft Server Shell",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Minecraft Server Shell was designed for people who want to host a free Minecraft Server on their computer.",
     "main": "src/index.js",
     "scripts": {

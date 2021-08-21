@@ -14,7 +14,8 @@ const pty = require("node-pty");
 
 // CHECK FOR UPDATES
 // Compares version with json "server"
-const application_version = "2.1.0";
+const application_version = require("./package.json").version;
+
 console.log(`%c MINECRAFT SERVER SHELL VERSION ${application_version} `, 'background: #ff0; color: #000;');
 fetch("https://edwardscamera.com/application_data.json")
     .then(raw => raw.json())
