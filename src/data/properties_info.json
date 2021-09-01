@@ -166,7 +166,7 @@
             "category": "advanced"
         },
         "rcon.port": {
-            "type": "integer (1-65534)",
+            "type": "integer",
             "min": 1,
             "max": 65534,
             "desc": "Sets the port to rcon.",
@@ -188,7 +188,7 @@
             "category": "advanced"
         },
         "server-port": {
-            "type": "integer (1-65534)",
+            "type": "integer",
             "min": 1,
             "max": 65534,
             "desc": "Changes the port the server is hosting (listening) on. This port must be forwarded if the server is hosted in a network using NAT (If you have a home router/firewall).",
@@ -256,6 +256,56 @@
             "type": "boolean",
             "desc": "Send rcon console command outputs to all online operators.",
             "category": "advanced"
+        },
+        "debug": {
+            "type": "boolean",
+            "desc": "Enable/disable debug mode.",
+            "category": "advanced"
+        },
+        "enable-jmx-monitoring": {
+            "type": "boolean",
+            "desc": "Exposes an MBean with the Object name \"net.minecraft.server:type=Server\" and two attributes \"averageTickTime\" and \"tickTimes\" exposing the tick times in milliseconds.",
+            "category": "advanced"
+        },
+        "enable-status": {
+            "type": "boolean",
+            "category": "advanced",
+            "desc": "Makes the server appear as \"online\" on the server list.\nIf set to false, it will suppress replies from clients. This means it will appear as offline, but will still accept connections."
+        },
+        "enforce-whitelist": {
+            "type": "boolean",
+            "category": "advanced",
+            "desc": "Enforces the whitelist on the server. When this option is enabled, users who are not present on the whitelist (if it's enabled) get kicked from the server after the server reloads the whitelist file.\nfalse - No user gets kicked if not on the whitelist.\ntrue - Online users not on the whitelist get kicked."
+        },
+        "entity-broadcast-range-percentage": {
+            "type": "integer",
+            "min": 10,
+            "max": 1000,
+            "category": "advanced",
+            "desc": "Controls how close entities need to be before being sent to clients. Higher values means they'll be rendered from farther away, potentially causing more lag. This is expressed the percentage of the default value. For example, setting to 50 will make it half as usual. This mimics the function on the client video settings (not unlike Render Distance, which the client can customize so long as it's under the server's setting)."
+        },
+        "function-permission-level": {
+            "category": "advanced",
+            "type": "integer",
+            "min": 1,
+            "max": 4,
+            "desc": "Sets the default permission level for functions."
+        },
+        "prevent-proxy-connections": {
+            "category": "advanced",
+            "type": "boolean",
+            "desc": "If the ISP/AS sent from the server is different from the one from Mojang Studios' authentication server, the player is kicked\ntrue - Enabled. Server prevents users from using vpns or proxies.\nfalse - Disabled. The server doesn't prevent users from using vpns or proxies."
+        },
+        "rate-limit": {
+            "category": "advanced",
+            "type": "integer",
+            "min": 0,
+            "desc": "Sets the maximum amount of packets a user can send before getting kicked. Setting to 0 disables this feature."
+        },
+        "sync-chunk-writes": {
+            "type": "boolean",
+            "category": "advanced",
+            "desc": "Enables synchronous chunk writes"
         }
     },
     "omit": []
