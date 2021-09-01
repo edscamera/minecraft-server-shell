@@ -55,6 +55,7 @@ updatePanel["properties"] = () => {
                                     j.shift();
                                     j.forEach(c => {
                                         if (c !== "") k += `<li>${c}</li>`
+                                        k = k.replace(c, "");
                                     });
                                     k += `</ul>`;
                                     return k;
