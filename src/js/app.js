@@ -10,9 +10,7 @@ const network = require("network");
 const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const pty = require("node-pty");
-const Opened = (path, callback) => {
-
-};
+const Opened = require("@ronomon/opened");
 
 // CHECK FOR UPDATES
 // Compares version with json "server"
@@ -149,20 +147,30 @@ document.querySelector("#Navbar_Exit").onclick = () => {
         if (checkInt) window.clearInterval(checkInt);
         setPanel("ServerSelect");
     };
-    Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
-        if (err) throw err;
-        if (!result) {
-            exit();
-        } else {
-            confirm(
-                "Do you really want to exit? A running server may be corrupted during a forced shut down.",
-                ["Yes", "Cancel"],
-                (ans) => {
-                    if (ans === 0) exit();
-                }
-            );
-        }
-    });
+    if (os.platform() === "linux") {
+        confirm(
+            "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+            ["Yes", "Cancel"],
+            (ans) => {
+                if (ans === 0) exit();
+            }
+        );
+    } else {
+        Opened.file(path.join(DIR.SERVER, "./server.jar"), (err, result) => {
+            if (err) throw err;
+            if (!result) {
+                exit();
+            } else {
+                confirm(
+                    "Do you really want to exit? A running server may be corrupted during a forced shut down.",
+                    ["Yes", "Cancel"],
+                    (ans) => {
+                        if (ans === 0) exit();
+                    }
+                );
+            }
+        });
+    }
 };
 
 // CREATE LAYOUT

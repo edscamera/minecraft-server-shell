@@ -9,10 +9,12 @@
 
     visibility: visible;
     opacity: 1;
+    z-index: 999;
 }
 .Loading_Toggle {
     visibility: hidden!important;
     opacity: 0!important;
+    z-index: initial!important;
 }
 #Loading_Background {
     background-color: #fff;
