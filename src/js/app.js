@@ -3,7 +3,6 @@ const fs = require("fs-extra");
 const os = require("os");
 const path = require("path");
 const dialog = require("electron").remote.dialog;
-const Opened = require("@ronomon/opened");
 const getSize = require("get-folder-size");
 const download = require("download");
 const resizeImg = require("resize-img");
@@ -11,6 +10,9 @@ const network = require("network");
 const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const pty = require("node-pty");
+const Opened = (path, callback) => {
+
+};
 
 // CHECK FOR UPDATES
 // Compares version with json "server"
