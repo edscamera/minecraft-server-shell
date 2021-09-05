@@ -2,9 +2,11 @@
     background-color: #fff;
     border-radius: 15px;
     padding: 15px;
-    width: 100%;
-    max-width: 600px;
+    width: calc(100% - 30px);
     margin-bottom: 15px;
+}
+.Properties_SubContainer:last-of-type {
+    margin-bottom: 0px!important;
 }
 .Properties_TitleText {
     font-size: 30px;
@@ -27,3 +29,9 @@
     left: 250px;
 }
 #Properties_Clearfix { height: 70px; }
+#Panel_Properties details {
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.9); 
+}

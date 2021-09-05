@@ -3,17 +3,17 @@
         "allow-flight": {
             "type": "boolean",
             "desc": "Allows users to use flight on your server while in Survival mode, if they have a mod that provides flight installed.\n\nWith allow-flight enabled, griefers will possibly be more common, because it will make their work easier. In Creative mode this has no effect.\n\nDisabled - Flight is not allowed (players in air for at least 5 seconds will be kicked).\nEnabled - Flight is allowed, and used if the player has a fly mod installed.",
-            "category": "game"
+            "category": "basic"
         },
         "allow-nether": {
             "type": "boolean",
             "desc": "Allows players to travel to the Nether.\nDisabled - Nether portals will not work.\nEnabled - The server will allow portals to send players to the Nether.",
-            "category": "game"
+            "category": "basic"
         },
         "announce-player-achievements": {
             "type": "boolean",
             "desc": "Allows server to announce when a player gets an achievement.",
-            "category": "game"
+            "category": "basic"
         },
         "difficulty": {
             "type": "option",
@@ -24,7 +24,7 @@
                 "Hard"
             ],
             "desc": "Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.",
-            "category": "game"
+            "category": "basic"
         },
         "enable-query": {
             "type": "boolean",
@@ -39,12 +39,12 @@
         "enable-command-block": {
             "type": "boolean",
             "desc": "Enables command blocks",
-            "category": "game"
+            "category": "basic"
         },
         "force-gamemode": {
             "type": "boolean",
             "desc": "Force players to join in the default game mode.\nDisabled - Players will join in the gamemode they left in.\nEnabled - Players will always join in the default gamemode.",
-            "category": "game"
+            "category": "basic"
         },
         "gamemode": {
             "type": "option",
@@ -55,12 +55,12 @@
                 "Spectator"
             ],
             "desc": "Defines the mode of gameplay.",
-            "category": "game"
+            "category": "basic"
         },
         "generate-structures": {
             "type": "boolean",
             "desc": "Defines whether structures (such as villages) will be generated.\nDisabled - Structures will not be generated in new chunks.\nEnabled - Structures will be generated in new chunks.\n\nNote: Dungeons will still generate if this is set to Disabled.",
-            "category": "game"
+            "category": "basic"
         },
         "generator-settings": {
             "type": "string",
@@ -70,7 +70,7 @@
         "hardcore": {
             "type": "boolean",
             "desc": "If set to Enabled, players will be set to spectator mode if they die.",
-            "category": "game"
+            "category": "basic"
         },
         "level-name": {
             "type": "string",
@@ -80,7 +80,7 @@
         "level-seed": {
             "type": "string",
             "desc": "Add a seed for your world, as in Singleplayer.\nSome examples are: minecraft, 404, 1a2b3c.",
-            "category": "game"
+            "category": "basic"
         },
         "level-type": {
             "type": "option",
@@ -91,7 +91,7 @@
                 "AMPLIFIED"
             ],
             "desc": "Determines the type of map that is generated.\nDEFAULT - Standard world with hills, valleys, water, etc.\nFLAT - A flat world with no features, meant for building.\nLARGEBIOMES - Same as default but all biomes are larger.\nAMPLIFIED - Same as default but world-generation height limit is increased.",
-            "category": "game"
+            "category": "basic"
         },
         "max-build-height": {
             "type": "integer",
@@ -105,7 +105,7 @@
             "min": 0,
             "max": 500000,
             "desc": "The maximum number of players that can play on the server at the same time. Note that if more players are on the server it will use more resources. Note also, op player connections are not supposed to count against the max players, but ops currently cannot join a full server. Extremely large values for this field result in the client-side user list being broken.",
-            "category": "game"
+            "category": "basic"
         },
         "max-tick-time": {
             "type": "integer",
@@ -119,12 +119,12 @@
             "min": 0,
             "max": 29999984,
             "desc": "This sets the maximum possible size in blocks, expressed as a radius, that the world border can obtain. Setting the world border bigger causes the commands to complete successfully but the actual border will not move past this block limit. Setting the max-world-size higher than the default doesn't appear to do anything.\n\nExamples:\n\nSetting max-world-size to 1000 will allow you to have a 2000x2000 world border.\nSetting max-world-size to 4000 will give you an 8000 x 8000 world border.",
-            "category": "game"
+            "category": "basic"
         },
         "motd": {
             "type": "string",
             "desc": "This is the message that is displayed in the server list of the client, below the name.\nThe MOTD does support color and formatting codes.\nThe MOTD supports special characters, such as \"♥\". However, such characters must be converted to escaped Unicode form.\nIf the MOTD is over 59 characters, the server list will likely report a communication error.",
-            "category": "game"
+            "category": "basic"
         },
         "network-compression-threshold": {
             "type": "integer",
@@ -151,7 +151,7 @@
         "pvp": {
             "type": "boolean",
             "desc": "Enable PvP on the server. Players shooting themselves with arrows will only receive damage if PvP is enabled.\nEnabled - Players will be able to kill each other.\nDisabled - Players cannot kill other players (also known as Player versus Environment (PvE)).\n\nNote: Indirect damage sources spawned by players (such as lava, fire, TNT and to some extent water, sand and gravel) will still deal damage to other players.",
-            "category": "game"
+            "category": "basic"
         },
         "query.port": {
             "type": "integer",
@@ -202,17 +202,17 @@
         "spawn-animals": {
             "type": "boolean",
             "desc": "Determines if animals will be able to spawn.\nEnabled - Animals spawn as normal.\nDisabled - Animals will immediately vanish.\n\nTip: if you have major lag, turn this off/set to Disabled.",
-            "category": "game"
+            "category": "basic"
         },
         "spawn-monsters": {
             "type": "boolean",
             "desc": "Determines if monsters will be spawned.\nEnabled - Enabled. Monsters will appear at night and in the dark.\nDisabled - Disabled. No monsters.\n\nThis setting has no effect if difficulty = 0 (peaceful). If difficulty is not = 0, a monster can still spawn from a Monster Spawner.\n\nTip: if you have major lag, turn this off/set to Disabled.",
-            "category": "game"
+            "category": "basic"
         },
         "spawn-npcs": {
             "type": "boolean",
             "desc": "Determines whether villagers will be spawned.\nEnabled - Enabled. Villagers will spawn.\nDisabled - Disabled. No villagers.",
-            "category": "game"
+            "category": "basic"
         },
         "spawn-protection": {
             "type": "integer",
@@ -235,7 +235,7 @@
         "white-list": {
             "type": "boolean",
             "desc": "Enables a whitelist on the server.\n\nWith a whitelist enabled, users not on the whitelist will be unable to connect. Intended for private servers, such as those for real-life friends or strangers carefully selected via an application process, for example.\n\nDisabled - No white list is used.\nEnabled - The file whitelist.json is used to generate the white list.\n\nNote: Ops are automatically white listed, and there is no need to add them to the whitelist.",
-            "category": "game"
+            "category": "basic"
         },
         "require-resource-pack": {
             "type": "boolean",

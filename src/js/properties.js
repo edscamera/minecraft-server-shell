@@ -13,7 +13,7 @@ updatePanel["properties"] = () => {
         setLoad(false);
         return;
     }
-    while (document.querySelector("#Properties_Container").children.length > 0) document.querySelector("#Properties_Container").children[0].remove();
+    while (document.querySelector("#Properties_Details_basic").children.length > 0) document.querySelector("#Properties_Details_basic").children[0].remove();
 
     if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) return setLoad(false);
 
@@ -32,84 +32,80 @@ updatePanel["properties"] = () => {
         let layout = [];
 
         Object.keys(dict).sort().forEach(key => {
-            try {
-                if (!omit.includes(key)) layout.push({
-                    tag: "div",
-                    type: p[key] ? p[key].type : "string",
-                    namespace: key,
-                    class: ["Properties_SubContainer"],
-                    children: [
-                        {
-                            tag: "span",
-                            class: ["Properties_TitleText"],
-                            content: key.replace(/\.|\-/g, " ").toProperCase(),
-                        },
-                        { tag: "br", },
-                        {
-                            tag: "span",
-                            class: ["Properties_DescText"],
-                            innerHTML: !p[key] ? "No Description Provided" : (() => {
-                                if (p[key].desc.split("\n").length > 1) {
-                                    let j = p[key].desc.split("\n");
-                                    k = `<span>${p[key].desc}</span><ul>`;
-                                    j.shift();
-                                    j.forEach(c => {
-                                        if (c !== "") k += `<li>${c}</li>`
-                                        k = k.replace(c, "");
-                                    });
-                                    k += `</ul>`;
-                                    return k;
-                                } else {
-                                    return p[key].desc;
-                                }
-                            })(),
-                        },
-                        { tag: "br", },
-                        (() => {
-                            if (p[key] == undefined || p[key].type.includes("string")) return {
-                                tag: "input",
-                                type: "text",
-                                value: dict[key],
+            if (!omit.includes(key) && p[key].category === "basic") layout.push({
+                tag: "div",
+                type: p[key] ? p[key].type : "string",
+                namespace: key,
+                class: ["Properties_SubContainer"],
+                children: [
+                    {
+                        tag: "span",
+                        class: ["Properties_TitleText"],
+                        content: key.replace(/\.|\-/g, " ").toProperCase(),
+                    },
+                    { tag: "br", },
+                    {
+                        tag: "span",
+                        class: ["Properties_DescText"],
+                        innerHTML: !p[key] ? "No Description Provided" : (() => {
+                            if (p[key].desc.split("\n").length > 1) {
+                                let j = p[key].desc.split("\n");
+                                k = `<span>${p[key].desc}</span><ul>`;
+                                j.shift();
+                                j.forEach(c => {
+                                    if (c !== "") k += `<li>${c}</li>`
+                                    k = k.replace(c, "");
+                                });
+                                k += `</ul>`;
+                                return k;
+                            } else {
+                                return p[key].desc;
                             }
-                            if (p[key].type.includes("boolean")) return {
-                                tag: "input",
-                                type: "checkbox",
-                                checked: dict[key] == "true",
-                                class: ["PropCheckbox"],
-                            };
-
-                            if (p[key].type.includes("int")) return {
-                                tag: "input",
-                                type: "number",
-                                value: dict[key].replace(/\s/g, ""),
-                                min: p[key].min ? p[key].min.toString() : null,
-                                max: p[key].max ? p[key].max.toString() : null,
-                                id: `__${key}`,
-                                oninput: () => {
-                                    if (p[key].max != undefined && window.parseInt(document.querySelector(`#__${key}`).value) > p[key].max) document.querySelector(`#__${key}`).value = p[key].max;
-                                    if (p[key].min != undefined && window.parseInt(document.querySelector(`#__${key}`).value) < p[key].min) document.querySelector(`#__${key}`).value = p[key].min;
-                                },
-                            }
-                            if (p[key].type.includes("option")) return {
-                                tag: "select",
-                                children: p[key].options.map(j => ({
-                                    tag: "option",
-                                    content: j,
-                                    selected: j.toLowerCase().replace(/\s/g, "") === dict[key].toLowerCase().replace(/\s/g, ""),
-                                })),
-                            }
-                            return {
-                                tag: "input",
-                                type: "text",
-                            };
                         })(),
-                    ],
-                });
-            } catch (e) {
-                console.log(key, e);
-            }
+                    },
+                    { tag: "br", },
+                    (() => {
+                        if (p[key] == undefined || p[key].type.includes("string")) return {
+                            tag: "input",
+                            type: "text",
+                            value: dict[key],
+                        }
+                        if (p[key].type.includes("boolean")) return {
+                            tag: "input",
+                            type: "checkbox",
+                            checked: dict[key] == "true",
+                            class: ["PropCheckbox"],
+                        };
+
+                        if (p[key].type.includes("int")) return {
+                            tag: "input",
+                            type: "number",
+                            value: dict[key].replace(/\s/g, ""),
+                            min: p[key].min ? p[key].min.toString() : null,
+                            max: p[key].max ? p[key].max.toString() : null,
+                            id: `__${key}`,
+                            oninput: () => {
+                                if (p[key].max != undefined && window.parseInt(document.querySelector(`#__${key}`).value) > p[key].max) document.querySelector(`#__${key}`).value = p[key].max;
+                                if (p[key].min != undefined && window.parseInt(document.querySelector(`#__${key}`).value) < p[key].min) document.querySelector(`#__${key}`).value = p[key].min;
+                            },
+                        }
+                        if (p[key].type.includes("option")) return {
+                            tag: "select",
+                            children: p[key].options.map(j => ({
+                                tag: "option",
+                                content: j,
+                                selected: j.toLowerCase().replace(/\s/g, "") === dict[key].toLowerCase().replace(/\s/g, ""),
+                            })),
+                        }
+                        return {
+                            tag: "input",
+                            type: "text",
+                        };
+                    })(),
+                ],
+            });
         });
-        createLayout(layout, document.querySelector("#Properties_Container"));
+        createLayout(layout, document.querySelector("#Properties_Details_basic"));
     });
     setLoad(false);
 };
@@ -124,7 +120,7 @@ document.querySelector("#Properties_Save").onclick = () => {
                         try {
                             setLoad(true, "Saving Changes");
                             dict = {};
-                            Array.from(document.querySelector("#Properties_Container").children).forEach(c => {
+                            Array.from(document.querySelector("#Properties_Details_basic").children).forEach(c => {
                                 if (c.type.includes("int")) {
                                     dict[c.namespace] = c.querySelector("input").value.toString();
                                 } else if (c.type.includes("boolean")) {
