@@ -16,6 +16,11 @@ body {
     display: flex;
     justify-content: space-between;
 }
+*:focus { outline: none; }
+summary {
+    cursor: pointer;
+    user-select: none;
+}
 a, .ExternalLink {
     color:#00f;
     user-select: none;
@@ -116,4 +121,10 @@ input[type="range"]::-webkit-slider-thumb {
     justify-content: center;
     align-items: center;
     display: flex;
+}
+.GeneralContainer {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    width: calc(100% - 30px);
 }

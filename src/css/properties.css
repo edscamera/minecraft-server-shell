@@ -5,6 +5,9 @@
     width: calc(100% - 30px);
     margin-bottom: 15px;
 }
+.Properties_SubContainer:first-of-type {
+    margin-top: 10px!important;
+}
 .Properties_SubContainer:last-of-type {
     margin-bottom: 0px!important;
 }

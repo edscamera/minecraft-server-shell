@@ -4,7 +4,14 @@
     border-radius: 15px;
     padding: 15px;
     flex: 1;
-    margin: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.Backups_Panel:first-of-type {
+    margin-left: 0px!important;
+}
+.Backups_Panel:last-of-type {
+    margin-right: 0px!important;
 }
 .Backups_Header {
     font-size: 30px;

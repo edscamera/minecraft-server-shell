@@ -57,19 +57,23 @@ fs.watch(DIR.SERVERS, () => updateServerList(DIR.SERVERS));
 updateServerList(DIR.SERVERS);
 
 const openServer = (server) => {
-    DIR.SERVER = path.join(DIR.SERVERS, server);
-    setPanel("Terminal");
-    document.querySelector("#Navbar_HeaderText").innerText = server;
-    document.querySelector("#Navbar_HeaderImg").src = fs.existsSync(path.join(DIR.SERVER, "./server-icon.png")) ? path.join(DIR.SERVER, "./server-icon.png") : "./img/default.png";
-    openTerminal(server);
-    updatePanel["properties"]();
-    const a = JSON.parse(fs.readFileSync(path.join(DIR.SERVER, "meta.json"), "utf-8"));
-    Array.from(document.querySelector("#Navbar_TopOption").children).forEach(c => {
-        c.classList.remove("Navbar_OptionActive");
-        c.style.display = "block";
-        if (a.core === "Vanilla") c.style.display = c.getAttribute("modOnly") == "true" ? "none" : "block";
-    });
-    document.querySelector("#Navbar_TopOption").children[0].classList.add("Navbar_OptionActive");
+    setLoad(true, "Opening Server");
+    window.setTimeout(() => {
+        DIR.SERVER = path.join(DIR.SERVERS, server);
+        setPanel("Terminal");
+        document.querySelector("#Navbar_HeaderText").innerText = server;
+        document.querySelector("#Navbar_HeaderImg").src = fs.existsSync(path.join(DIR.SERVER, "./server-icon.png")) ? path.join(DIR.SERVER, "./server-icon.png") : "./img/default.png";
+        openTerminal(server);
+        updatePanel["properties"]();
+        const a = JSON.parse(fs.readFileSync(path.join(DIR.SERVER, "meta.json"), "utf-8"));
+        Array.from(document.querySelector("#Navbar_TopOption").children).forEach(c => {
+            c.classList.remove("Navbar_OptionActive");
+            c.style.display = "block";
+            if (a.core === "Vanilla") c.style.display = c.getAttribute("modOnly") == "true" ? "none" : "block";
+        });
+        document.querySelector("#Navbar_TopOption").children[0].classList.add("Navbar_OptionActive");
+        setLoad(false);
+    }, 100);
 };
 
 const deleteServer = (server) => {
@@ -86,7 +90,7 @@ document.querySelector("#ServerSelect_CreateServer").onclick = () => setPanel("C
 document.querySelector("#ServerSelect_OpenServerFolder").onclick = () => {
     switch (os.platform()) {
         case "win32":
-            require("child_process").exec(`explorer" ${DIR.SERVERS}"`);
+            require("child_process").exec(`explorer "${DIR.SERVERS}"`);
             break;
         case "linux":
             require("child_process").exec(`xdg-open "${DIR.SERVERS}"`);

@@ -1,6 +1,7 @@
 String.prototype.toProperCase = function () {
     return this.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
 };
+let prop_categories = ["basic", "advanced", "misc"];
 updatePanel["properties"] = () => {
     setLoad(true, "Loading Properties");
     if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) {
@@ -13,7 +14,7 @@ updatePanel["properties"] = () => {
         setLoad(false);
         return;
     }
-    while (document.querySelector("#Properties_Details_basic").children.length > 0) document.querySelector("#Properties_Details_basic").children[0].remove();
+
 
     if (!fs.existsSync(path.join(DIR.SERVER, "./server.properties"))) return setLoad(false);
 
@@ -31,81 +32,87 @@ updatePanel["properties"] = () => {
         let omit = JSON.parse(text).omit;
         let layout = [];
 
-        Object.keys(dict).sort().forEach(key => {
-            if (!omit.includes(key) && p[key].category === "basic") layout.push({
-                tag: "div",
-                type: p[key] ? p[key].type : "string",
-                namespace: key,
-                class: ["Properties_SubContainer"],
-                children: [
-                    {
-                        tag: "span",
-                        class: ["Properties_TitleText"],
-                        content: key.replace(/\.|\-/g, " ").toProperCase(),
-                    },
-                    { tag: "br", },
-                    {
-                        tag: "span",
-                        class: ["Properties_DescText"],
-                        innerHTML: !p[key] ? "No Description Provided" : (() => {
-                            if (p[key].desc.split("\n").length > 1) {
-                                let j = p[key].desc.split("\n");
-                                k = `<span>${p[key].desc}</span><ul>`;
-                                j.shift();
-                                j.forEach(c => {
-                                    if (c !== "") k += `<li>${c}</li>`
-                                    k = k.replace(c, "");
-                                });
-                                k += `</ul>`;
-                                return k;
-                            } else {
-                                return p[key].desc;
+        prop_categories.forEach(myCat => {
+            let containerElm = document.querySelector(`#Properties_Details_${myCat}`).querySelector("div");
+            while (containerElm.children.length > 0) containerElm.children[0].remove();
+            Object.keys(dict).sort().forEach(key => {
+                if ((p.hasOwnProperty(key) && !omit.includes(key) && p[key].category === myCat) || (myCat === "misc" && !p.hasOwnProperty(key))) layout.push({
+                    category: p[key] ? p[key].category : "misc",
+                    tag: "div",
+                    type: p[key] ? p[key].type : "string",
+                    namespace: key,
+                    class: ["Properties_SubContainer"],
+                    children: [
+                        {
+                            tag: "span",
+                            class: ["Properties_TitleText"],
+                            content: key.replace(/\.|\-/g, " ").toProperCase(),
+                        },
+                        { tag: "br", },
+                        {
+                            tag: "span",
+                            class: ["Properties_DescText"],
+                            innerHTML: !p[key] ? "No Description Provided" : (() => {
+                                if (p[key].desc.split("\n").length > 1) {
+                                    let j = p[key].desc.split("\n");
+                                    k = `<span>${p[key].desc}</span><ul>`;
+                                    j.shift();
+                                    j.forEach(c => {
+                                        if (c !== "") k += `<li>${c}</li>`
+                                        k = k.replace(c, "");
+                                    });
+                                    k += `</ul>`;
+                                    return k;
+                                } else {
+                                    return p[key].desc;
+                                }
+                            })(),
+                        },
+                        { tag: "br", },
+                        (() => {
+                            if (p[key] == undefined || p[key].type.includes("string")) return {
+                                tag: "input",
+                                type: "text",
+                                value: dict[key],
                             }
-                        })(),
-                    },
-                    { tag: "br", },
-                    (() => {
-                        if (p[key] == undefined || p[key].type.includes("string")) return {
-                            tag: "input",
-                            type: "text",
-                            value: dict[key],
-                        }
-                        if (p[key].type.includes("boolean")) return {
-                            tag: "input",
-                            type: "checkbox",
-                            checked: dict[key] == "true",
-                            class: ["PropCheckbox"],
-                        };
+                            if (p[key].type.includes("boolean")) return {
+                                tag: "input",
+                                type: "checkbox",
+                                checked: dict[key][0] == "t",
+                                class: ["PropCheckbox"],
+                            };
 
-                        if (p[key].type.includes("int")) return {
-                            tag: "input",
-                            type: "number",
-                            value: dict[key].replace(/\s/g, ""),
-                            min: p[key].min ? p[key].min.toString() : null,
-                            max: p[key].max ? p[key].max.toString() : null,
-                            id: `__${key}`,
-                            oninput: () => {
-                                if (p[key].max != undefined && window.parseInt(document.querySelector(`#__${key}`).value) > p[key].max) document.querySelector(`#__${key}`).value = p[key].max;
-                                if (p[key].min != undefined && window.parseInt(document.querySelector(`#__${key}`).value) < p[key].min) document.querySelector(`#__${key}`).value = p[key].min;
-                            },
-                        }
-                        if (p[key].type.includes("option")) return {
-                            tag: "select",
-                            children: p[key].options.map(j => ({
-                                tag: "option",
-                                content: j,
-                                selected: j.toLowerCase().replace(/\s/g, "") === dict[key].toLowerCase().replace(/\s/g, ""),
-                            })),
-                        }
-                        return {
-                            tag: "input",
-                            type: "text",
-                        };
-                    })(),
-                ],
+                            if (p[key].type.includes("int")) return {
+                                tag: "input",
+                                type: "number",
+                                value: dict[key].replace(/\s/g, ""),
+                                min: p[key].min ? p[key].min.toString() : null,
+                                max: p[key].max ? p[key].max.toString() : null,
+                                id: `__${key}`,
+                                oninput: () => {
+                                    if (p[key].max != undefined && window.parseInt(document.querySelector(`#__${key}`).value) > p[key].max) document.querySelector(`#__${key}`).value = p[key].max;
+                                    if (p[key].min != undefined && window.parseInt(document.querySelector(`#__${key}`).value) < p[key].min) document.querySelector(`#__${key}`).value = p[key].min;
+                                },
+                            }
+                            if (p[key].type.includes("option")) return {
+                                tag: "select",
+                                children: p[key].options.map(j => ({
+                                    tag: "option",
+                                    content: j,
+                                    selected: j.toLowerCase().replace(/\s/g, "") === dict[key].toLowerCase().replace(/\s/g, ""),
+                                })),
+                            }
+                            return {
+                                tag: "input",
+                                type: "text",
+                            };
+                        })(),
+                    ],
+                });
             });
+            layout = layout.filter(z => z.category === myCat);
+            createLayout(layout, containerElm);
         });
-        createLayout(layout, document.querySelector("#Properties_Details_basic"));
     });
     setLoad(false);
 };
@@ -120,7 +127,8 @@ document.querySelector("#Properties_Save").onclick = () => {
                         try {
                             setLoad(true, "Saving Changes");
                             dict = {};
-                            Array.from(document.querySelector("#Properties_Details_basic").children).forEach(c => {
+
+                            Array.from(document.querySelector("#Panel_Properties").getElementsByClassName("Properties_SubContainer")).forEach(c => {
                                 if (c.type.includes("int")) {
                                     dict[c.namespace] = c.querySelector("input").value.toString();
                                 } else if (c.type.includes("boolean")) {
@@ -178,6 +186,7 @@ document.querySelector("#Properties_Reset").onclick = () => {
                             fs.copyFileSync(path.join(DIR.SERVER, "default_server.properties"), path.join(DIR.SERVER, "server.properties"));
                         }
                         setLoad(false);
+                        updatePanel["properties"]();
                     }
                 }
             );

@@ -52,9 +52,9 @@
         <div id="Panel_ServerSelect" navbar="false">
             <div id="ServerSelect_Label">Locating Servers</div>
             <div id="ServerSelect_List"></div>
-            <div class="textCenter">
-                <div id="ServerSelect_CreateServer" class="ServerSelect_Button">Create Server</div>
-                <div id="ServerSelect_OpenServerFolder" class="ServerSelect_Button">Open Server Folder</div>
+            <div class="ServerSelect_Fixedbar textCenter">
+                <div class="Button Border" id="ServerSelect_CreateServer">Create Server</div>
+                <div class="Button Border" id="ServerSelect_OpenServerFolder">Open Server Folder</div>
             </div>
         </div>
         <div id="Panel_CreateServer" navbar="false">
@@ -201,7 +201,9 @@
             </div>
         </div>
         <div id="Panel_Terminal" navbar="true">
-            <div id="Terminal_Terminal"></div>
+            <div class="GeneralContainer">
+                <div class="GeneralContainer" id="Terminal_Terminal"></div>
+            </div>
             <div class="textCenter">
                 <br />
                 <div id="Terminal_Start" class="Button">Start Server</div>
@@ -210,14 +212,17 @@
         </div>
         <div id="Panel_Properties" navbar="true">
             <div id="Properties_Container">
-                <details id="Properties_Details_basic">
+                <details id="Properties_Details_basic" open>
                     <summary>Basic</summary>
+                    <div></div>
                 </details>
                 <details id="Properties_Details_advanced">
                     <summary>Advanced</summary>
+                    <div></div>
                 </details>
                 <details id="Properties_Details_misc">
                     <summary>Misc.</summary>
+                    <div></div>
                 </details>
             </div>
             <div id="Properties_Clearfix"></div>
@@ -242,7 +247,7 @@
             </div>
         </div>
         <div id="Panel_PortForwarding" navbar="true">
-            <div class="Properties_SubContainer">
+            <div class="GeneralContainer">
                 <div class="LeftRight">
                     <span>Setup Port Forwarding</span>
                     <a id="PortForwarding_DefaultGateway">Loading</a>

@@ -36,20 +36,12 @@
     cursor: pointer;
 }
 .ServerSelect_DeleteAction:hover { color: #800; }
-.ServerSelect_Button {
-    display: inline-block;
-    padding: 15px;
-    margin: 0px 15px 15px 15px;
-
-    width: 180px;
+.ServerSelect_Fixedbar {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
     background-color: #fff;
-    border-radius: 15px;
-
-    transition: .2s ease-out;
-    user-select: none;
-    cursor: pointer;
+    padding: 15px;
+    width: 100%;
 }
-.ServerSelect_Button:first-child { background-color: #0c0; }
-.ServerSelect_Button:first-child:hover { background-color: #0a0; }
-.ServerSelect_Button:last-child { background-color: #ffe999; }
-.ServerSelect_Button:last-child:hover { background-color: #ddc777; }
+.ServerSelect_Fixedbar > .Button { margin: 15px!important; }
