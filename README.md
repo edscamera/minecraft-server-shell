@@ -1,4 +1,4 @@
-# MinecraftServerShell v2.1.0
+# MinecraftServerShell v2.2.0
 
 Minecraft Server Shell was designed for people who want to host a free Minecraft Server on their computer.
 
